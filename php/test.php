@@ -9,12 +9,11 @@ if (mysqli_connect_errno())
 }
 else{
 //connection successfull
-	echo "success";
-	echo "<br>";
+	//echo "success";
+	//echo "<br>";
     $result = mysqli_query($con,"SELECT * FROM route");
     
     //echo $result->num_rows; echo "<br>";
-
     
     echo "[";
     
