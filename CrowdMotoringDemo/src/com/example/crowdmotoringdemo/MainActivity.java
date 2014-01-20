@@ -1,5 +1,15 @@
 package com.example.crowdmotoringdemo;
 
+import java.io.IOException;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -35,6 +45,11 @@ public class MainActivity extends Activity {
 				if(!clicked96) mButton96.setBackgroundColor(Color.rgb(255,165,0));
 				else mButton96.setBackgroundResource(android.R.drawable.btn_default);
 				clicked96 = !clicked96;
+				
+				// Test php call
+				if(clicked96){
+					new DataRetriever().execute();
+				}
 			}
 		});
 		
