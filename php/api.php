@@ -61,7 +61,7 @@
 			$number = $this->_request['number'];
 			$time = $this->_request['time'];
 			$location = $this->_request['location'];
-			$sql = mysql_query("SELECT post_id, author_id, content FROM post WHERE time = '$time' AND stop_time_id = (SELECT stop_time_id FROM stop_time WHERE route_id = (SELECT route_id FROM route WHERE name='$number') AND stop_id = '$location')", $this->db);
+			$sql = mysql_query("SELECT post_id, author_id, content FROM post WHERE stop_time_id = (SELECT stop_time_id FROM stop_time WHERE time = '$time' AND route_id = (SELECT route_id FROM route WHERE name='$number') AND stop_id = '$location')", $this->db);
 			//$sql = mysql_query("SELECT post_id, author_id, content FROM post WHERE time = '$time'", $this->db);
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
