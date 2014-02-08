@@ -62,7 +62,7 @@
 			$time = $this->_request['time'];
 			$location = $this->_request['location'];
 			$sql = mysql_query("SELECT post_id, author_id, content FROM post WHERE stop_time_id = (SELECT stop_time_id FROM stop_time WHERE time = '$time' AND route_id = (SELECT route_id FROM route WHERE name='$number') AND stop_id = '$location')", $this->db);
-			//$sql = mysql_query("SELECT post_id, author_id, content FROM post WHERE time = '$time'", $this->db);
+			
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
@@ -81,9 +81,9 @@
 			$pwd = $this->_request['pwd'];
 			$sql=mysql_query("INSERT INTO user (name,email,password) VALUES('$name', '$email','$pwd')",$this->db);
 			if($sql){
-				$this->response($this->json_string("Registration success"), 200);
+				$this->response(("{\"Registration success\"}"), 200);
 			}
-			$this->response($this->json_string("Registration failed"), 200);
+			$this->response(("{\"Registration failed\"}"), 200);
 		}
 
 		private function login(){
@@ -95,7 +95,7 @@
 				$result = mysql_fetch_array($sql,MYSQL_ASSOC);
 				$this->response($this->json($result), 200);
 			}
-			$this->response($this->json_string("No such user"), 200);
+			$this->response(("{\"No such user\"}"), 200);
 		}
 
 		private function rate(){
@@ -105,9 +105,9 @@
 			$rate = $this->_request['rate'];
 			$sql=mysql_query("INSERT INTO rating (author_id, reviewer_id, post_id, rate) VALUES($author_id, $reviewer_id, $post_id, $rate)",$this->db);
 			if($sql){
-				$this->response($this->json_string("Rating success"), 200);
+				$this->response(("{\"Rating success\"}"), 200);
 			}
-			$this->response($this->json_string("Rating failed"), 200);
+			$this->response(("{\"Rating failed\"}"), 200);
 		}
 
 
@@ -152,9 +152,9 @@
 					//$this->response($this->json_string("success"), 200);
 					//$this->response($this->json_string($stop_time_id), 200);
 				}else{
-					mysql_query("INSERT INTO stop_time (route_id, stop_id, time) VALUES($route_id, '$stop', '$time')",$this->db);
-					$sql=mysql_query("SELECT stop_time_id FROM stop_time WHERE route_id = $route_id AND stop_id = '$stop' AND time = '$time'",$this->db);
-					//$this->response($this->json($sql2), 200);
+				mysql_query("INSERT INTO stop_time (route_id, stop_id, time) VALUES($route_id, '$stop', '$time')",$this->db);
+				$sql=mysql_query("SELECT stop_time_id FROM stop_time WHERE route_id = $route_id AND stop_id = '$stop' AND time = '$time'",$this->db);
+				//$this->response($this->json($sql2), 200);
 					if(mysql_num_rows($sql) > 0){
 						$result = array();
 						$result[] = mysql_fetch_array($sql,MYSQL_ASSOC);
@@ -167,12 +167,12 @@
 				//$this->response($this->json_string($route_id), 200);
 				$sql4 = mysql_query("INSERT INTO post (time, content, author_id,stop_time_id,route_id) VALUES('$time','$content', $user_id,'$stop_time_id', $route_id)",$this->db);
 				if($sql4){
-					$this->response($this->json_string("Providing info success"), 200);
+					$this->response(("{\"Providing info success\"}"), 200);
 				}
 			}
-			$this->response($this->json_string("Providing info failed"), 200);
+			$this->response(("{\"Providing info failed\"}"), 200);
 	
-		} // end of function provide()
+		}
 	}
 	// Initiiate Library
 	
