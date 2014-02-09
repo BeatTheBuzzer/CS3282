@@ -55,7 +55,7 @@
 			}
 			$this->response('',204);	// If no records "No Content" status
 		}
-		
+			
 		private function lookup(){
 			$type = $this->_request['type'];
 			$number = $this->_request['number'];
@@ -135,7 +135,7 @@
 			if(mysql_num_rows($sql) > 0){
 				$result = array();
 				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
-					$result[] = $rlt;
+						$result[] = $rlt;
 				}
 				// If success everythig is good send header as "OK" and return list of users in JSON format				
 				$this->response($this->json($result), 200);
