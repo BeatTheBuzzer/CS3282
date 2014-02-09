@@ -142,7 +142,23 @@
 			}
 			$this->response('',204);
 		}
-		
+		/*
+			return all bus stops with their GPS coordinates
+		*/
+		private function allstops(){
+			$query="SELECT stop_id, name, location, latitude, longitude FROM bus_stop";
+			$sql=mysql_query($query,$this->db);
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+				}
+				// If success everythig is good send header as "OK" and return list of users in JSON format				
+				$this->response($this->json($result), 200);
+			}
+			$this->response('',204);
+		}
+
 		private function provide(){
 			$user_id = $this -> _request['user_id'];
 			$time = $this -> _request['time'];
