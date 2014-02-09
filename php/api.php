@@ -125,7 +125,23 @@
 				return json_encode($data);
 			}
 		}
-
+		/* return all buses with their time in a particular bus stop
+		SELECT name, time FROM route,stop_time WHERE stop_time.stop_id='B18331' AND stop_time.route_id = route.route_id;
+		*/
+		private function businfo(){
+			$stop_id=$this->_request['stop_id'];
+			$query="SELECT name, time FROM route,stop_time WHERE stop_time.stop_id='$stop_id' AND stop_time.route_id = route.route_id";
+			$sql=mysql_query($query,$this->db);
+			if(mysql_num_rows($sql) > 0){
+				$result = array();
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[] = $rlt;
+				}
+				// If success everythig is good send header as "OK" and return list of users in JSON format				
+				$this->response($this->json($result), 200);
+			}
+			$this->response('',204);
+		}
 		
 		private function provide(){
 			$user_id = $this -> _request['user_id'];
