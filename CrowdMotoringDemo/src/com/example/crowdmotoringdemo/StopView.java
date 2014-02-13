@@ -26,8 +26,6 @@ public class StopView extends Activity implements DataRetrieverResponse{
         
         transportArray = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1);
         transportList.setAdapter(transportArray);
-		
-		setContentView(R.layout.stop_view);
 	}
 	
 	protected void onStart(){
@@ -43,7 +41,7 @@ public class StopView extends Activity implements DataRetrieverResponse{
 	@Override
 	public void onDataRetrieved(Object output) {
 		// TODO Auto-generated method stub
-		System.out.println("Success obtaining json");
+		System.out.println("Success obtaining json " + output);
 		
 		try {
 			transportArrayJson = new JSONArray((String)output);
@@ -51,6 +49,8 @@ public class StopView extends Activity implements DataRetrieverResponse{
 			for(int i = 0; i < transportArrayJson.length(); i++){
 				transportArray.add(transportArrayJson.optJSONObject(i).optString("name"));
 			}
+			
+			transportArray.notifyDataSetChanged();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

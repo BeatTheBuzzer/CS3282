@@ -132,7 +132,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 		// 2. Create clickable bus stop buttons sorted by distance
 		// 3. Add events to each bus stop button to change to StopView
 		
-		System.out.println("Success obtaining json");
+		System.out.println("Success obtaining json " + output);
 		
 		try {
 			stopArrayJson = new JSONArray((String)output);
