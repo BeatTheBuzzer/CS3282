@@ -12,6 +12,8 @@ CREATE TABLE bus_stop(
 	type ENUM('bus','MRT'),
 	name VARCHAR(40) NOT NULL,
 	location VARCHAR(100),
+	latitude DOUBLE,
+	longitude DOUBLE,
 	PRIMARY KEY(stop_id)
 );
 CREATE TABLE stop_time(
