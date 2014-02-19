@@ -1,0 +1,25 @@
+#!/bin/bash
+time=""
+while read line; do
+    for word in $line; do
+	#echo "INSERT INTO stop_time (route_id, stop_id, time)
+#VALUES(1,'B18331','07:00:00');"
+        #echo ${word:0:5}" "${word:5} >> output.txt
+	if [ "${word:5}" == "am" ]
+	then
+		echo ${word:0:5}:00 >> "$1.txt"
+	else
+
+		#echo ${word:0:5}
+		hr=${word:0:2}
+			if [ "$hr" != "12" ]
+			then
+				num=`expr $hr + 12`
+			else
+				num=$hr
+			fi
+	echo $num${word:2:3}:00 >> "$1.txt"
+	fi
+		
+    done
+done < "$1"

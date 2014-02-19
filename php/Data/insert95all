@@ -1,0 +1,19 @@
+#!/bin/bash
+FILES=/PATH/*
+for f in $FILES
+do
+	while read line;do
+		echo "INSERT INTO stop_time(route_id, stop_id, time) VALUES(1,'$f','$line');" > insert.sql
+	mysql -u crowdapp -h cloudappserver-i.comp.nus.edu.sg -pcs3282 crowd_db < insert.sql
+	done < "$f"
+done
+#!/bin/bash
+FILES=./data/*
+for f in $FILES
+do
+	echo ${f:7}
+	while read line;do
+		echo "INSERT INTO stop_time(route_id, stop_id, time) VALUES(1,'${f:7}','$line');" > ./insert.sql
+	mysql -u crowdapp -pcs3282 crowd_db < ./insert.sql
+	done < "$f"
+done
