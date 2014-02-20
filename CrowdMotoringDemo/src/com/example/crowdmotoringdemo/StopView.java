@@ -30,6 +30,7 @@ public class StopView extends Activity implements DataRetrieverResponse{
 		
         
         transportArray = new StopViewListAdapter(getApplicationContext(), R.layout.stop_view_list_element);
+        transportArray.stopId = stopId;
         transportList.setAdapter(transportArray);
 	}
 	

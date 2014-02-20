@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class StopViewListAdapter extends ArrayAdapter<StopViewListElement> {
+		String stopId;
 
 		public StopViewListAdapter(Context context, int textViewResourceId) {
 		    super(context, textViewResourceId);
@@ -27,32 +28,15 @@ public class StopViewListAdapter extends ArrayAdapter<StopViewListElement> {
 		public View getView(int position, View convertView, ViewGroup parent) {
 
 		    View v = convertView;
-		    Button sendCrowdedInfo;
-		    Button sendNotCrowdedInfo;
 
 		    if (v == null) {
 
 		        LayoutInflater vi;
 		        vi = LayoutInflater.from(getContext());
 		        v = vi.inflate(R.layout.stop_view_list_element, null);
-		        sendCrowdedInfo = (Button) v.findViewById(R.id.crowdedness_button_yes);
-		        sendNotCrowdedInfo = (Button) v.findViewById(R.id.crowdedness_button_no);
-		        
-		        sendCrowdedInfo.setOnClickListener(new View.OnClickListener() {           
-			    	  @Override
-			    	  public void onClick(View v) {
-			    		  
-			    	  }    
-			    });
-		        
-		        sendNotCrowdedInfo.setOnClickListener(new View.OnClickListener() {           
-			    	  @Override
-			    	  public void onClick(View v) {
-			    	  }    
-			    });
 		    }
 
-		    StopViewListElement p = getItem(position);
+		    final StopViewListElement p = getItem(position);
 
 		    if (p != null) {
 		    	TextView transportName = (TextView) v.findViewById(R.id.transport_name);
@@ -81,6 +65,30 @@ public class StopViewListAdapter extends ArrayAdapter<StopViewListElement> {
 		    		crowdednessButtonYes.setVisibility(View.GONE);
 		    		crowdednessButtonNo.setVisibility(View.GONE);
 		    	}
+		    	
+		    	crowdednessButtonYes.setOnClickListener(new View.OnClickListener() { 
+			    	  @Override
+			    	  public void onClick(View v) {
+			    		  System.out.println("onCreate finishing");
+			    		  System.out.println(QueryBuilder.post("1", "16:00:00", "crowded", p.getTransportName(), stopId));
+			    		  DataRetriever retriever = new DataRetriever();
+			    	      retriever.execute(QueryBuilder.post("1", "16:00:00", "crowded", p.getTransportName(), stopId));
+			    	      p.setToggleYes(true);
+			    	      p.setToggleNo(false);
+			    	  }    
+			    });
+		        
+		    	crowdednessButtonNo.setOnClickListener(new View.OnClickListener() {           
+			    	  @Override
+			    	  public void onClick(View v) {
+			    		  System.out.println("onCreate finishing");
+			    		  System.out.println(QueryBuilder.post("1", "16:00:00", "uncrowded", p.getTransportName(), stopId));
+			    		  DataRetriever retriever = new DataRetriever();
+			    	      retriever.execute(QueryBuilder.post("1", "16:00:00", "uncrowded", p.getTransportName(), stopId));
+			    	      p.setToggleYes(true);
+			    	      p.setToggleNo(false);
+			    	  }    
+			    });
 		    }
 
 		    return v;
