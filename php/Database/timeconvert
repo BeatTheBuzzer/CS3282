@@ -1,0 +1,26 @@
+#!/bin/bash
+FILES=./Bus96/*
+for f in $FILES
+do			
+	time=""
+	while read line; do
+		for word in $line; do
+			if [ "${word:5}" == "am" ]
+			then
+				echo ${word:0:5}:00 >> "./bus96in24hour/${f:8:6}"
+			else
+
+#echo ${word:0:5}
+			hr=${word:0:2}
+			if [ "$hr" != "12" ]
+			then
+				num=`expr $hr + 12`
+			else
+			num=$hr
+			fi
+				echo $num${word:2:3}:00 >> "./bus96in24hour/${f:8:6}"
+			fi
+
+		done
+	done < "$f"
+done

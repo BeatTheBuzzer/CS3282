@@ -1,0 +1,10 @@
+#!/bin/bash
+FILES=./bus151in24hour/*
+for f in $FILES
+do
+	echo ${f:17}
+	while read line;do
+		echo "INSERT INTO schedule(route_id, stop_id, time) VALUES(3,'${f:17}','$line');" > ./insert.sql
+	mysql -u crowdapp -h cloudappserver-i.comp.nus.edu.sg -pcs3282 crowdapp_db < ./insert.sql
+	done < "$f"
+done
