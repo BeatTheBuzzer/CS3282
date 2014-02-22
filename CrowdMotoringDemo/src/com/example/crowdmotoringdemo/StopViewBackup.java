@@ -2,21 +2,17 @@ package com.example.crowdmotoringdemo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.example.crowdmotoringdemo.R;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.format.Time;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class StopView extends Activity implements DataRetrieverResponse{
+
+public class StopViewBackup extends Activity implements DataRetrieverResponse{
+String stopId;
 	
-	String stopId;
-	
-	StopViewListAdapter transportArray;
+	ArrayAdapter<String> transportArray;
 	ListView transportList;
 	JSONArray transportArrayJson;
 	
@@ -27,10 +23,8 @@ public class StopView extends Activity implements DataRetrieverResponse{
 		stopId = getIntent().getStringExtra(Constant.EXTRA_STOP_ID);
 		
 		transportList = (ListView) findViewById(R.id.list);
-		
         
-        transportArray = new StopViewListAdapter(getApplicationContext(), R.layout.stop_view_list_element);
-        transportArray.stopId = stopId;
+        transportArray = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1);
         transportList.setAdapter(transportArray);
 	}
 	
@@ -51,20 +45,9 @@ public class StopView extends Activity implements DataRetrieverResponse{
 		
 		try {
 			transportArrayJson = new JSONArray((String)output);
-			transportArray.clear();
 			
 			for(int i = 0; i < transportArrayJson.length(); i++){
-				StopViewListElement temp = new StopViewListElement();
-				JSONObject data = transportArrayJson.optJSONObject(i);
-				temp.setTransportName(data.optString("name"));
-				Time currTime = new Time();
-				String arrivalTime = data.optString("time");
-				temp.setArrivalTimeMin(0); // Stub
-				temp.setButtonShown(true);
-				temp.setCrowdedness(true);
-				temp.toggleNo = false;
-				temp.toggleYes = false;
-				transportArray.add(temp);
+				transportArray.add(transportArrayJson.optJSONObject(i).optString("name"));
 			}
 			
 			transportArray.notifyDataSetChanged();
@@ -73,5 +56,4 @@ public class StopView extends Activity implements DataRetrieverResponse{
 			e.printStackTrace();
 		}
 	}
-
 }

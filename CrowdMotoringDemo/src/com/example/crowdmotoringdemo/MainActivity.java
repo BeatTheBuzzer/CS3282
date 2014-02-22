@@ -1,6 +1,9 @@
 package com.example.crowdmotoringdemo;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -19,8 +22,12 @@ import com.example.crowdmotoringdemo.DataRetrieverResponse;
 import com.example.crowdmotoringdemo.QueryBuilder;
 import com.example.crowdmotoringdemo.R;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.Menu;
@@ -43,7 +50,9 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 	
 	ArrayAdapter<String> stopArray;
 	ListView stopList;
-	JSONArray stopArrayJson;
+	ArrayList<JSONObject> stopArrayJsonList;
+	LocationManager locationManager;
+	LocationListener locationListener;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +69,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
 				
-				String stopId = stopArrayJson.optJSONObject(position).optString("stop_id");
+				String stopId = stopArrayJsonList.get(position).optString("stop_id");
 				
 				Intent stopViewScreen = new Intent(getApplicationContext(), StopView.class);
 				stopViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
@@ -123,6 +132,40 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 		DataRetriever retriever = new DataRetriever();
 		retriever.caller = this;
         retriever.execute(QueryBuilder.getAllStops());
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        // Define a listener that responds to location updates
+        locationListener = new LocationListener() {
+        	public void onLocationChanged(Location location) {
+        		// Called when a new location is found by the network location provider.
+        		System.out.println("I am called!");
+        		double latitude = location.getLatitude();
+        		double longitude = location.getLongitude();
+        		
+        		for(int i = 0; i < stopArrayJsonList.size(); i++){
+        			JSONObject currBusStop = stopArrayJsonList.get(i);
+        			double busStopLatitude = Double.parseDouble(currBusStop.optString("latitude"));
+        			double busStopLongitude = Double.parseDouble(currBusStop.optString("longitude"));
+        			double distance = MiscFunctions.GPSDistance(latitude, longitude, busStopLatitude, busStopLongitude);
+        			try {
+        				currBusStop.put("distance", distance);
+        			} catch (JSONException e) {
+        				// TODO Auto-generated catch block
+        				e.printStackTrace();
+        			}
+        		}
+        		System.out.println("I am called!");
+        		sortBusStop();
+        	}
+
+        	public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+        	public void onProviderEnabled(String provider) {}
+
+        	public void onProviderDisabled(String provider) {}
+        };
+
+        // Register the listener with the Location Manager to receive location updates
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 	}
 
 	@Override
@@ -133,13 +176,17 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 		// 3. Add events to each bus stop button to change to StopView
 		
 		System.out.println("Success obtaining json " + output);
+		JSONArray stopArrayJson;
 		
 		try {
 			stopArrayJson = new JSONArray((String)output);
-			
+			stopArrayJsonList = new ArrayList<JSONObject>();
 			for(int i = 0; i < stopArrayJson.length(); i++){
-				stopArray.add(stopArrayJson.optJSONObject(i).optString("name"));
+				stopArrayJsonList.add(stopArrayJson.optJSONObject(i));
+				stopArrayJson.optJSONObject(i).put("distance", 0.0);
 			}
+			
+			this.sortBusStop();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -149,4 +196,12 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 		
 	}
 
+	protected void sortBusStop(){
+		stopArray.clear();
+		Collections.sort(stopArrayJsonList, new JSONComparatorByDistance());
+		for(int i = 0; i < stopArrayJsonList.size(); i++){
+			JSONObject currBusStop = stopArrayJsonList.get(i);
+			stopArray.add(currBusStop.optString("name"));
+		}
+	}
 }

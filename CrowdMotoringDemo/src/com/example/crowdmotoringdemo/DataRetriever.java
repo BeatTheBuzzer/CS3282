@@ -47,6 +47,7 @@ public class DataRetriever extends AsyncTask<String, Object, String>{
 	}
 	
 	protected void onPostExecute(String response){
+		if(caller == null || response == null) return;
 		System.out.println("onPostExecute " + response);
 		caller.onDataRetrieved(response);
 	}
