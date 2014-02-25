@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:background="#888888"
+        android:orientation="vertical"
+        android:padding="0dp" >
+    	
+    	<TextView
+    	    android:id="@+id/crowdednessRealTimeText"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:text=""
+    		android:textAlignment="center"
+    		android:textColor="#FFFFFF"
+            android:textSize="24dp" />
+    	
+    	<TextView
+    	    android:id="@+id/crowdednessHistoricalText"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:text=""
+    		android:textAlignment="center"
+    		android:textColor="#FFFFFF"
+            android:textSize="24dp" />
+    	
+    	<Switch
+    	    android:id="@+id/crowdednessSwitch"
+    	    android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:textOff="Uncrowded"
+        	android:textOn="Crowded"
+    	    />
+        
+    </LinearLayout>
+
+</RelativeLayout>

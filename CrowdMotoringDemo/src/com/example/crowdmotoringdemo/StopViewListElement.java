@@ -2,11 +2,9 @@ package com.example.crowdmotoringdemo;
 
 public class StopViewListElement {
 	protected String transportName;
-	protected int arrivalTimeMin;
+	protected long arrivalTimeMin;
+	protected int routeId;
 	protected boolean crowdedness;
-	protected boolean buttonShown;
-	protected boolean toggleYes;
-	protected boolean toggleNo;
 	
 	public StopViewListElement(){
 		
@@ -16,59 +14,31 @@ public class StopViewListElement {
 		return transportName;
 	}
 	
-	public int getArrivalTimeMin(){
+	public long getArrivalTimeMin(){
 		return arrivalTimeMin;
+	}
+	
+	public int getRouteId(){
+		return routeId;
 	}
 	
 	public boolean getCrowdedness(){
 		return crowdedness;
 	}
 	
-	public boolean getButtonShown(){
-		return buttonShown;
-	}
-	
-	public boolean getToggleYes(){
-		return toggleYes;
-	}
-	
-	public boolean getToggleNo(){
-		return toggleNo;
-	}
-	
 	public void setTransportName(String name){
 		transportName = name;
 	}
 	
-	public void setArrivalTimeMin(int time){
+	public void setArrivalTimeMin(long time){
 		arrivalTimeMin = time;
 	}
 	
+	public void setRouteId(int id){
+		routeId = id;
+	}
+	
 	public void setCrowdedness(boolean crowded){
-		if(!toggleYes && !toggleNo) crowdedness = crowded;
-	}
-	
-	public void setButtonShown(boolean show){
-		buttonShown = show;
-	}
-	
-	public void setToggleYes(boolean toggle){
-		if(toggle && !toggleNo){
-			toggleYes = true;
-			crowdedness = true;
-		}
-		else{
-			toggleYes = false;
-		}
-	}
-	
-	public void setToggleNo(boolean toggle){
-		if(toggle && !toggleYes){
-			toggleNo = true;
-			crowdedness = false;
-		}
-		else{
-			toggleNo = false;
-		}
+		crowdedness = crowded;
 	}
 }

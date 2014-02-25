@@ -1,5 +1,9 @@
 package com.example.crowdmotoringdemo;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +18,11 @@ import android.widget.ListView;
 
 public class StopView extends Activity implements DataRetrieverResponse{
 	
+	final int QUERY_BUS_INFO = 1;
+	final int QUERY_CROWDEDNESS_INFO = 2;
+	
 	String stopId;
+	int currentQuery;
 	
 	StopViewListAdapter transportArray;
 	ListView transportList;
@@ -41,7 +49,12 @@ public class StopView extends Activity implements DataRetrieverResponse{
 		System.out.println(QueryBuilder.getBusInfo(stopId));
 		DataRetriever retriever = new DataRetriever();
 		retriever.caller = this;
+		currentQuery = QUERY_BUS_INFO;
         retriever.execute(QueryBuilder.getBusInfo(stopId));
+	}
+	
+	protected void setCrowdedness(){
+		
 	}
 
 	@Override
@@ -57,13 +70,20 @@ public class StopView extends Activity implements DataRetrieverResponse{
 				StopViewListElement temp = new StopViewListElement();
 				JSONObject data = transportArrayJson.optJSONObject(i);
 				temp.setTransportName(data.optString("name"));
-				Time currTime = new Time();
-				String arrivalTime = data.optString("time");
-				temp.setArrivalTimeMin(0); // Stub
-				temp.setButtonShown(true);
+				Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("SGT"));
+				String arrivalTimeStr = data.optString("time");
+				String[] arrivalTimeArr = arrivalTimeStr.split(":");
+				Calendar busArrivalTime = Calendar.getInstance(TimeZone.getTimeZone("SGT"));
+				busArrivalTime.set(Calendar.SECOND, Integer.parseInt(arrivalTimeArr[2]));
+				busArrivalTime.set(Calendar.MINUTE, Integer.parseInt(arrivalTimeArr[1]));
+				busArrivalTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(arrivalTimeArr[0]));
+				busArrivalTime.add(Calendar.MILLISECOND, -1*Constant.TIME_OFFSET);
+				long timeUntilArrival = busArrivalTime.getTimeInMillis() - currTime.getTimeInMillis();
+				System.out.println(arrivalTimeArr[2]+":"+arrivalTimeArr[1]+":"+arrivalTimeArr[0]);
+				System.out.println(busArrivalTime.getTimeInMillis() + " "+ currTime.getTimeInMillis());
+				temp.setArrivalTimeMin(timeUntilArrival/60000);
+				temp.setRouteId(data.optInt("route_id"));
 				temp.setCrowdedness(true);
-				temp.toggleNo = false;
-				temp.toggleYes = false;
 				transportArray.add(temp);
 			}
 			
