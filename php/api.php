@@ -92,7 +92,7 @@ class API extends REST {
 	 */
 	private function businfo(){
 		$stop_id=$this->_request['stop_id'];
-		$query="SELECT schedule.route_id, name, time FROM route,schedule WHERE schedule.stop_id='$stop_id' AND schedule.route_id = route.route_id AND time >= subtime(curtime(),'00:05:00') AND time <= addtime(curtime(),'00:10:00')";
+		$query="SELECT schedule.route_id, name, time FROM route,schedule WHERE schedule.stop_id='$stop_id' AND schedule.route_id = route.route_id AND time >= curtime() GROUP BY route_id ORDER BY time";
 		$sql=mysql_query($query,$this->db);
 
 		if(mysql_num_rows($sql) > 0){
