@@ -18,7 +18,7 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 	final String crowdednessHistoricalReport = "Historically, the bus is reported |crowdedness| at this point of time.";
 	
 	String stopId;
-	String transportId;
+	int routeId;
 	
 	TextView realTimeText;
 	TextView historicalText;
@@ -29,7 +29,7 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 		setContentView(R.layout.transport_info_view);
 		
 		stopId = getIntent().getStringExtra(Constant.EXTRA_STOP_ID);
-		transportId = getIntent().getStringExtra(Constant.EXTRA_TRANSPORT_ID);
+		routeId = getIntent().getIntExtra(Constant.EXTRA_ROUTE_ID, -1);
 		
 		realTimeText = (TextView) findViewById(R.id.crowdednessRealTimeText);
 		historicalText = (TextView) findViewById(R.id.crowdednessHistoricalText);
@@ -40,12 +40,12 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 		super.onStart();
 		
 		System.out.println("onCreate finishing");
-		System.out.println(QueryBuilder.getCurrentCrowdedness(stopId, transportId));
+		System.out.println(QueryBuilder.getCurrentCrowdedness(stopId, routeId));
 		DataRetriever retriever = new DataRetriever();
 		retriever.caller = this;
-        retriever.execute(QueryBuilder.getCurrentCrowdedness(stopId, transportId));
-        System.out.println(QueryBuilder.getHistoricalCrowdedness(stopId, transportId));
-        retriever.execute(QueryBuilder.getHistoricalCrowdedness(stopId, transportId));
+        retriever.execute(QueryBuilder.getCurrentCrowdedness(stopId, routeId));
+        System.out.println(QueryBuilder.getHistoricalCrowdedness(stopId, routeId));
+        retriever.execute(QueryBuilder.getHistoricalCrowdedness(stopId, routeId));
 	}
 
 	@Override

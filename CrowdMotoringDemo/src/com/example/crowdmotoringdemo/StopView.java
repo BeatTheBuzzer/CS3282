@@ -69,7 +69,9 @@ public class StopView extends Activity implements DataRetrieverResponse{
 			for(int i = 0; i < transportArrayJson.length(); i++){
 				StopViewListElement temp = new StopViewListElement();
 				JSONObject data = transportArrayJson.optJSONObject(i);
+				
 				temp.setTransportName(data.optString("name"));
+				
 				Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("SGT"));
 				String arrivalTimeStr = data.optString("time");
 				String[] arrivalTimeArr = arrivalTimeStr.split(":");
@@ -79,10 +81,11 @@ public class StopView extends Activity implements DataRetrieverResponse{
 				busArrivalTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(arrivalTimeArr[0]));
 				busArrivalTime.add(Calendar.MILLISECOND, -1*Constant.TIME_OFFSET);
 				long timeUntilArrival = busArrivalTime.getTimeInMillis() - currTime.getTimeInMillis();
-				System.out.println(arrivalTimeArr[2]+":"+arrivalTimeArr[1]+":"+arrivalTimeArr[0]);
-				System.out.println(busArrivalTime.getTimeInMillis() + " "+ currTime.getTimeInMillis());
 				temp.setArrivalTimeMin(timeUntilArrival/60000);
+				
 				temp.setRouteId(data.optInt("route_id"));
+				
+				StopViewGetCrowdedness.getCrowdedness(temp, stopId);
 				temp.setCrowdedness(true);
 				transportArray.add(temp);
 			}
