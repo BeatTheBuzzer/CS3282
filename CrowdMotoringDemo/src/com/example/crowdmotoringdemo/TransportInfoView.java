@@ -42,14 +42,14 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 		System.out.println("onCreate finishing");
 		System.out.println(QueryBuilder.getCurrentCrowdedness(stopId, routeId));
 		DataRetriever retriever = new DataRetriever();
-		retriever.caller = this;
+		retriever.setCallback(this);
         retriever.execute(QueryBuilder.getCurrentCrowdedness(stopId, routeId));
         System.out.println(QueryBuilder.getHistoricalCrowdedness(stopId, routeId));
         retriever.execute(QueryBuilder.getHistoricalCrowdedness(stopId, routeId));
 	}
 
 	@Override
-	public void onDataRetrieved(Object output) {
+	public void onDataRetrieved(Object output, String requestStr) {
 		
 		// If current info
 		// If historical info

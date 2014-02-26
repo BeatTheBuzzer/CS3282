@@ -22,10 +22,11 @@ public class StopViewGetCrowdedness implements DataRetrieverResponse{
 	}
 
 	@Override
-	public void onDataRetrieved(Object output) {
+	public synchronized void onDataRetrieved(Object output, String requestStr) {
 		// TODO Auto-generated method stub
 		System.out.println("Success obtaining json " + output);
 		// If historical
+		
 		// If current	
 	}
 
