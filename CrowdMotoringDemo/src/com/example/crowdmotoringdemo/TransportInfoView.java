@@ -13,9 +13,8 @@ import android.widget.TextView;
 
 public class TransportInfoView extends Activity implements DataRetrieverResponse{
 	
-	final String crowdednessRealTimeReport = "The bus is reported |crowdedness| at |stopId| |time| ago.";
 	final String crowdednessRealTimeNoReport = "Currently there is no report on the crowdedness of this bus.";
-	final String crowdednessHistoricalReport = "Historically, the bus is reported |crowdedness| at this point of time.";
+	final String crowdednessHistoricalNoReport = "Historically, there is no report on the crowdedness of this bus.";
 	
 	String stopId;
 	int routeId;
@@ -52,8 +51,55 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 
 	@Override
 	public void onDataRetrieved(Object output, String requestStr) {
-		
-		// If current info
-		// If historical info
+		if(requestStr.contains("history")){
+			try {
+				if(output == null){
+					historicalText.setText(crowdednessHistoricalNoReport);
+					return;
+				}
+				JSONArray historicalDataArr = new JSONArray((String)output);
+				JSONObject historicalData = historicalDataArr.getJSONObject(0);
+				int yes = historicalData.optInt("yes");
+				int no = historicalData.optInt("no");
+				if(yes == 0 && no == 0){
+					historicalText.setText(crowdednessHistoricalNoReport);
+					return;
+				}
+				if(yes > no) historicalText.setText(historicalReportBuilder(true));
+				else historicalText.setText(historicalReportBuilder(false));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else if (requestStr.contains("current")){
+			try {
+				if(output == null){
+					realTimeText.setText(crowdednessRealTimeNoReport);
+					return;
+				}
+				JSONArray currentDataArr = new JSONArray((String)output);
+				JSONObject currentData = currentDataArr.getJSONObject(0);
+				String crowdedData = currentData.optString("crowded");
+				String time = currentData.optString("difference");
+				if(crowdedData.equals("yes")) realTimeText.setText(realTimeReportBuilder(true, time));
+				else realTimeText.setText(realTimeReportBuilder(false, time));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected String realTimeReportBuilder(boolean crowdedness, String time){
+		String[] timeArr = time.split(":");
+		String timeHour = timeArr[0] + " hours";
+		String timeMinute = timeArr[1] + " minutes";
+		String timeSecond = timeArr[2] + " seconds";
+		return "The bus is reported " + (crowdedness?"crowded":"uncrowded") + " at " + stopId +" " + timeHour + " " + timeMinute + " " + timeSecond + " ago.";
+	}
+	
+	protected String historicalReportBuilder(boolean crowdedness){
+		return "Historically, the bus is reported " + (crowdedness?"crowded":"uncrowded") + " at this point of time.";
 	}
 }

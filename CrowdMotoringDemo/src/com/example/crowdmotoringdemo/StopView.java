@@ -48,7 +48,7 @@ public class StopView extends Activity implements DataRetrieverResponse{
 				// TODO Auto-generated method stub
 				Intent transportViewScreen = new Intent(getApplicationContext(), TransportInfoView.class);
 				transportViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
-				transportViewScreen.putExtra(Constant.EXTRA_ROUTE_ID, stopId);
+				transportViewScreen.putExtra(Constant.EXTRA_ROUTE_ID, transportArray.getItem(position).getRouteId());
 				startActivity(transportViewScreen);
 			}
 				
