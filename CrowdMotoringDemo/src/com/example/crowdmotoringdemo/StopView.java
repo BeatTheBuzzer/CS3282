@@ -11,8 +11,11 @@ import org.json.JSONObject;
 import com.example.crowdmotoringdemo.R;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -37,6 +40,19 @@ public class StopView extends Activity implements DataRetrieverResponse{
         transportArray = new StopViewListAdapter(getApplicationContext(), R.layout.stop_view_list_element);
         transportArray.stopId = stopId;
         transportList.setAdapter(transportArray);
+        
+        transportList.setOnItemClickListener(new AdapterView.OnItemClickListener() {  
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				// TODO Auto-generated method stub
+				Intent transportViewScreen = new Intent(getApplicationContext(), TransportInfoView.class);
+				transportViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
+				transportViewScreen.putExtra(Constant.EXTRA_ROUTE_ID, stopId);
+				startActivity(transportViewScreen);
+			}
+				
+    	});
 	}
 	
 	protected void onStart(){
@@ -82,7 +98,6 @@ public class StopView extends Activity implements DataRetrieverResponse{
 				temp.setRouteId(data.optInt("route_id"));
 				
 				StopViewGetCrowdedness.getCrowdedness(temp, stopId);
-				temp.setCrowdedness(Constant.CROWDEDNESS_TRUE);
 				transportArray.add(temp);
 			}
 			
