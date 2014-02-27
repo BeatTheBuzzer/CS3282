@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 		
 		stopList = (ListView) findViewById(R.id.list);
         
-        stopArray = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1);
+        stopArray = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_custom);
         stopList.setAdapter(stopArray);
         
         stopList.setOnItemClickListener(new AdapterView.OnItemClickListener() {  
@@ -130,7 +130,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 		System.out.println("onCreate finishing");
 		System.out.println(QueryBuilder.getAllStops());
 		DataRetriever retriever = new DataRetriever();
-		retriever.caller = this;
+		retriever.setCallback(this);
         retriever.execute(QueryBuilder.getAllStops());
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         // Define a listener that responds to location updates
@@ -169,7 +169,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 	}
 
 	@Override
-	public void onDataRetrieved(Object output) {
+	public void onDataRetrieved(Object output, String requestStr) {
 		// TODO Auto-generated method stub
 		// 1. Translate the string into JSON object
 		// 2. Create clickable bus stop buttons sorted by distance

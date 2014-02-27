@@ -15,8 +15,13 @@ import android.os.AsyncTask;
 
 public class DataRetriever extends AsyncTask<String, Object, String>{
 	
-	DataRetrieverResponse caller;
-
+	protected DataRetrieverResponse caller;
+	protected String requestStr;
+	
+	public void setCallback(DataRetrieverResponse caller){
+		this.caller = caller;
+	}
+	
 	@Override
 	protected String doInBackground(String... paramString) {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -24,6 +29,7 @@ public class DataRetriever extends AsyncTask<String, Object, String>{
         HttpResponse httpResponse = null;
         
         System.out.println("Requesting data with parameter "+paramString[0]);
+        requestStr = paramString[0];
         
         String response = "";
         String url = Constant.URL_SERVER + paramString[0];
@@ -33,7 +39,7 @@ public class DataRetriever extends AsyncTask<String, Object, String>{
 			httpResponse = httpClient.execute(httpGet);
 			
 			httpEntity = httpResponse.getEntity();
-            response = EntityUtils.toString(httpEntity);
+            response = httpEntity == null? null:EntityUtils.toString(httpEntity);
             System.out.println("Got string " + response);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
@@ -47,9 +53,9 @@ public class DataRetriever extends AsyncTask<String, Object, String>{
 	}
 	
 	protected void onPostExecute(String response){
-		if(caller == null || response == null) return;
+		if(caller == null) return;
 		System.out.println("onPostExecute " + response);
-		caller.onDataRetrieved(response);
+		caller.onDataRetrieved(response, requestStr);
 	}
 
 }

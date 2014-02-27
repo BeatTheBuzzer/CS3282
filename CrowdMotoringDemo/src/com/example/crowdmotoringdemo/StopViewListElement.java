@@ -4,7 +4,7 @@ public class StopViewListElement {
 	protected String transportName;
 	protected long arrivalTimeMin;
 	protected int routeId;
-	protected boolean crowdedness;
+	protected int crowdedness;
 	
 	public StopViewListElement(){
 		
@@ -22,7 +22,7 @@ public class StopViewListElement {
 		return routeId;
 	}
 	
-	public boolean getCrowdedness(){
+	public int getCrowdedness(){
 		return crowdedness;
 	}
 	
@@ -38,7 +38,7 @@ public class StopViewListElement {
 		routeId = id;
 	}
 	
-	public void setCrowdedness(boolean crowded){
+	public void setCrowdedness(int crowded){
 		crowdedness = crowded;
 	}
 }

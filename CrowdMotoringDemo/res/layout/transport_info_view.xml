@@ -35,13 +35,17 @@
     		android:textColor="#FFFFFF"
             android:textSize="24dp" />
     	
-    	<Switch
-    	    android:id="@+id/crowdednessSwitch"
-    	    android:layout_width="wrap_content"
-        	android:layout_height="wrap_content"
-        	android:textOff="Uncrowded"
-        	android:textOn="Crowded"
-    	    />
+    	<Button
+    	    android:id="@+id/crowdednessTrueButton"
+     		android:layout_height="wrap_content"
+     		android:layout_width="wrap_content"
+     		android:text="Currently it is crowded"/>
+    	
+    	<Button
+    	    android:id="@+id/crowdednessFalseButton"
+     		android:layout_height="wrap_content"
+     		android:layout_width="wrap_content"
+     		android:text="Currently it is uncrowded"/>
         
     </LinearLayout>
 

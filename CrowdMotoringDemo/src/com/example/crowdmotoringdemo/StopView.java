@@ -11,15 +11,15 @@ import org.json.JSONObject;
 import com.example.crowdmotoringdemo.R;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class StopView extends Activity implements DataRetrieverResponse{
-	
-	final int QUERY_BUS_INFO = 1;
-	final int QUERY_CROWDEDNESS_INFO = 2;
 	
 	String stopId;
 	int currentQuery;
@@ -40,6 +40,19 @@ public class StopView extends Activity implements DataRetrieverResponse{
         transportArray = new StopViewListAdapter(getApplicationContext(), R.layout.stop_view_list_element);
         transportArray.stopId = stopId;
         transportList.setAdapter(transportArray);
+        
+        transportList.setOnItemClickListener(new AdapterView.OnItemClickListener() {  
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				// TODO Auto-generated method stub
+				Intent transportViewScreen = new Intent(getApplicationContext(), TransportInfoView.class);
+				transportViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
+				transportViewScreen.putExtra(Constant.EXTRA_ROUTE_ID, transportArray.getItem(position).getRouteId());
+				startActivity(transportViewScreen);
+			}
+				
+    	});
 	}
 	
 	protected void onStart(){
@@ -48,8 +61,7 @@ public class StopView extends Activity implements DataRetrieverResponse{
 		System.out.println("onCreate finishing");
 		System.out.println(QueryBuilder.getBusInfo(stopId));
 		DataRetriever retriever = new DataRetriever();
-		retriever.caller = this;
-		currentQuery = QUERY_BUS_INFO;
+		retriever.setCallback(this);
         retriever.execute(QueryBuilder.getBusInfo(stopId));
 	}
 	
@@ -58,7 +70,7 @@ public class StopView extends Activity implements DataRetrieverResponse{
 	}
 
 	@Override
-	public void onDataRetrieved(Object output) {
+	public void onDataRetrieved(Object output, String requestStr) {
 		// TODO Auto-generated method stub
 		System.out.println("Success obtaining json " + output);
 		
@@ -69,7 +81,9 @@ public class StopView extends Activity implements DataRetrieverResponse{
 			for(int i = 0; i < transportArrayJson.length(); i++){
 				StopViewListElement temp = new StopViewListElement();
 				JSONObject data = transportArrayJson.optJSONObject(i);
+				
 				temp.setTransportName(data.optString("name"));
+				
 				Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("SGT"));
 				String arrivalTimeStr = data.optString("time");
 				String[] arrivalTimeArr = arrivalTimeStr.split(":");
@@ -79,15 +93,13 @@ public class StopView extends Activity implements DataRetrieverResponse{
 				busArrivalTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(arrivalTimeArr[0]));
 				busArrivalTime.add(Calendar.MILLISECOND, -1*Constant.TIME_OFFSET);
 				long timeUntilArrival = busArrivalTime.getTimeInMillis() - currTime.getTimeInMillis();
-				System.out.println(arrivalTimeArr[2]+":"+arrivalTimeArr[1]+":"+arrivalTimeArr[0]);
-				System.out.println(busArrivalTime.getTimeInMillis() + " "+ currTime.getTimeInMillis());
 				temp.setArrivalTimeMin(timeUntilArrival/60000);
+				
 				temp.setRouteId(data.optInt("route_id"));
-				temp.setCrowdedness(true);
+				
+				StopViewGetCrowdedness.getCrowdedness(temp, stopId, transportArray, transportList);
 				transportArray.add(temp);
 			}
-			
-			transportArray.notifyDataSetChanged();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
