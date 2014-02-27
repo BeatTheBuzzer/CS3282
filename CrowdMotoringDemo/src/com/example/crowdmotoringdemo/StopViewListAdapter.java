@@ -26,7 +26,6 @@ public class StopViewListAdapter extends ArrayAdapter<StopViewListElement>{
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-
 		    View v = convertView;
 
 		    if (v == null) {
@@ -56,36 +55,8 @@ public class StopViewListAdapter extends ArrayAdapter<StopViewListElement>{
 		    	else if (p.getCrowdedness() == Constant.CROWDEDNESS_NO_DATA){
 		    		crowdednessInfo.setText("No Data");
 		    	}
-		    	
-//		    	crowdednessButtonYes.setOnClickListener(new View.OnClickListener() { 
-//			    	  @Override
-//			    	  public void onClick(View v) {
-//			    		  System.out.println("onCreate finishing");
-//			    		  System.out.println(QueryBuilder.post("1", "16:00:00", "crowded", p.getTransportName(), stopId));
-//			    		  DataRetriever retriever = new DataRetriever();
-//			    	      retriever.execute(QueryBuilder.post("1", "16:00:00", "crowded", p.getTransportName(), stopId));
-//			    	      p.setToggleYes(true);
-//			    	      p.setToggleNo(false);
-//			    	  }    
-//			    });
-//		        
-//		    	crowdednessButtonNo.setOnClickListener(new View.OnClickListener() {           
-//			    	  @Override
-//			    	  public void onClick(View v) {
-//			    		  System.out.println("onCreate finishing");
-//			    		  System.out.println(QueryBuilder.post("1", "16:00:00", "uncrowded", p.getTransportName(), stopId));
-//			    		  DataRetriever retriever = new DataRetriever();
-//			    	      retriever.execute(QueryBuilder.post("1", "16:00:00", "uncrowded", p.getTransportName(), stopId));
-//			    	      p.setToggleYes(true);
-//			    	      p.setToggleNo(false);
-//			    	  }    
-//			    });
 		    }
 		    
-//		    DataRetriever retriever = new DataRetriever();
-//			retriever.caller = this;
-//	        retriever.execute(QueryBuilder.getCurrentCrowdedness(stopId, "95"));
-
 		    return v;
 
 		}

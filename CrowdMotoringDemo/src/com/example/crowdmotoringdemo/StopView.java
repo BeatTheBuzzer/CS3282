@@ -97,11 +97,9 @@ public class StopView extends Activity implements DataRetrieverResponse{
 				
 				temp.setRouteId(data.optInt("route_id"));
 				
-				StopViewGetCrowdedness.getCrowdedness(temp, stopId);
+				StopViewGetCrowdedness.getCrowdedness(temp, stopId, transportArray, transportList);
 				transportArray.add(temp);
 			}
-			
-			transportArray.notifyDataSetChanged();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

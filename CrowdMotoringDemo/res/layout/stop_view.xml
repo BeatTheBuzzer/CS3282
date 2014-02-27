@@ -21,8 +21,8 @@
             android:id="@+id/search_text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:text="Search for bus or MRT"
+            android:text=""
+            android:hint="Search for bus or MRT"
             android:textColor="#FFFFFF"
             android:textSize="12dp" />
     	

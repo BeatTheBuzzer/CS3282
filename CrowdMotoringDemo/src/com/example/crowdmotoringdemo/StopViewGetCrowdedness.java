@@ -4,20 +4,26 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.widget.ListView;
+
 public class StopViewGetCrowdedness implements DataRetrieverResponse{
+	protected StopViewListAdapter adapter;
+	protected ListView listView;
 	protected StopViewListElement e;
 	protected String stopId;
 	protected volatile boolean isCurrent;
 	
-	public static void getCrowdedness(StopViewListElement e, String stopId){
-		StopViewGetCrowdedness getter = new StopViewGetCrowdedness(e, stopId);
+	public static void getCrowdedness(StopViewListElement e, String stopId, StopViewListAdapter adapter, ListView listView){
+		StopViewGetCrowdedness getter = new StopViewGetCrowdedness(e, stopId, adapter, listView);
 		getter.retrieveCrowdednessInfo();
 	}
 	
-	protected StopViewGetCrowdedness(StopViewListElement e, String stopId){
+	protected StopViewGetCrowdedness(StopViewListElement e, String stopId, StopViewListAdapter adapter, ListView listView){
 		this.e = e;
 		this.stopId = stopId;
 		this.isCurrent = false;
+		this.adapter = adapter;
+		this.listView = listView;
 	}
 	
 	protected void retrieveCrowdednessInfo(){
@@ -71,6 +77,8 @@ public class StopViewGetCrowdedness implements DataRetrieverResponse{
 				e.printStackTrace();
 			}
 		}
+		
+		listView.setAdapter(adapter);
 	}
 
 }
