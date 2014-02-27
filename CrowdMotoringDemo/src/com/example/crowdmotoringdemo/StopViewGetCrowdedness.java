@@ -65,6 +65,7 @@ public class StopViewGetCrowdedness implements DataRetrieverResponse{
 				isCurrent = true;
 				if(crowdedData.equals("yes")) e.setCrowdedness(Constant.CROWDEDNESS_TRUE);
 				else e.setCrowdedness(Constant.CROWDEDNESS_FALSE);
+				System.out.println("crowdedness:" + e.getCrowdedness());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

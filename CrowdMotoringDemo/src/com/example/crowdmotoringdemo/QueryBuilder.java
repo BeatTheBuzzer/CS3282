@@ -9,8 +9,8 @@ public class QueryBuilder {
 		return "rquest=businfo&stop_id=" + stopId;
 	}
 	
-	public static String post(String userId, String time, String content, String transportName, String stopId){
-		return "rquest=provide&user_id=" + userId + "&time=" + time + "&content=" + content + "&number=" + transportName + "&stop=" + stopId;
+	public static String post(int route_id, String stop_id, boolean crowded){
+		return "rquest=provide&route_id=" + route_id + "&stop_id=" + stop_id + "&crowded=" + (crowded?Constant.CROWDEDNESS_POST_TRUE:Constant.CROWDEDNESS_POST_FALSE);
 	}
 	
 	public static String getCurrentCrowdedness(String stopId, int routeId){

@@ -5,8 +5,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.Time;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -21,7 +24,8 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 	
 	TextView realTimeText;
 	TextView historicalText;
-	Switch crowdednessSwitch;
+	Button crowdednessTrueButton;
+	Button crowdednessFalseButton;
 	
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -32,7 +36,30 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 		
 		realTimeText = (TextView) findViewById(R.id.crowdednessRealTimeText);
 		historicalText = (TextView) findViewById(R.id.crowdednessHistoricalText);
-		crowdednessSwitch = (Switch) findViewById(R.id.crowdednessSwitch);
+		crowdednessTrueButton = (Button) findViewById(R.id.crowdednessTrueButton);
+		crowdednessFalseButton = (Button) findViewById(R.id.crowdednessFalseButton);
+		
+		crowdednessTrueButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				DataRetriever poster = new DataRetriever();
+		        poster.execute(QueryBuilder.post(routeId, stopId, true));
+				crowdednessTrueButton.setVisibility(View.GONE);
+				crowdednessFalseButton.setVisibility(View.GONE);
+			}
+		});
+		
+		crowdednessFalseButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				DataRetriever poster = new DataRetriever();
+		        poster.execute(QueryBuilder.post(routeId, stopId, false));
+				crowdednessTrueButton.setVisibility(View.GONE);
+				crowdednessFalseButton.setVisibility(View.GONE);
+			}
+		});
 	}
 	
 	protected void onStart(){

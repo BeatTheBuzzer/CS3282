@@ -7,8 +7,8 @@ public class Constant {
 	
 	public static final String URL_SERVER = "http://cloudappserver-i.comp.nus.edu.sg/api.php?";
 	
-	public static final String CROWDEDNESS_POST_TRUE = "crowded";
-	public static final String CROWDEDNESS_POST_FALSE = "uncrowded";
+	public static final String CROWDEDNESS_POST_TRUE = "yes";
+	public static final String CROWDEDNESS_POST_FALSE = "no";
 	
 	public static final int TIME_OFFSET = 28800000;
 	

@@ -46,6 +46,7 @@ public class StopViewListAdapter extends ArrayAdapter<StopViewListElement>{
 		    	transportName.setText(p.getTransportName());
 		    	if(p.getArrivalTimeMin() < 2) arrivalTimeText.setText("Soon");
 		    	else arrivalTimeText.setText("in " + p.getArrivalTimeMin() + " mins");
+		    	System.out.println(p.getCrowdedness());
 		    	if(p.getCrowdedness() == Constant.CROWDEDNESS_TRUE){
 		    		crowdednessInfo.setText("Crowded");
 		    	}
