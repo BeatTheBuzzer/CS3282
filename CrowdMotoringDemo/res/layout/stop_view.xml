@@ -22,7 +22,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text=""
-            android:hint="Search for bus or MRT"
+            android:hint="Search for bus stop or station"
             android:textColor="#FFFFFF"
             android:textSize="12dp" />
     	

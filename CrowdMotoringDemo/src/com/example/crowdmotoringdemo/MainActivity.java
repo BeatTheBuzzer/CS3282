@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 		
 		stopList = (ListView) findViewById(R.id.list);
         
-        stopArray = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1);
+        stopArray = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_custom);
         stopList.setAdapter(stopArray);
         
         stopList.setOnItemClickListener(new AdapterView.OnItemClickListener() {  
