@@ -129,9 +129,9 @@ class API extends REST {
 		$query="INSERT INTO info (route_id, stop_id, time, date, crowded) VALUES ($route_id, '$stop_id', CURTIME(), CURDATE(), '$crowded')";
 		$sql = mysql_query($query, $this->db);
 		if($sql){
-			$this->response(("{\"Success\"}"), 200);
+			$this->response(("{\"result\":\"Success\"}"), 200);
 		}
-		$this->response(("{\"Failed\"}"), 200);
+		$this->response(("{\"result\":\"Failed\"}"), 200);
 	}
 
 	private function current(){
@@ -161,8 +161,10 @@ class API extends REST {
 				// If success everythig is good send header as "OK" and return list of users in JSON format				
 				$this->response($this->json($result), 200);
 			}
-			$this->response(("{\"failed\"}"),200);
+			//$this->response(("{\"No data\"}"),200);
 		}
+
+		$this->response('',204);
 	}
 
 	private function history(){
@@ -184,6 +186,23 @@ class API extends REST {
 		}
 	}
 
+
+
+	private function busname(){
+
+		$stop_id = $this->_request['stop_id'];
+		$query = "SELECT name FROM bus_stop WHERE stop_id='$stop_id'";
+		$sql=mysql_query($query,$this->db);
+		if($sql){
+			if(mysql_num_rows($sql) > 0){
+				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+					$result[]=$rlt;
+				}
+				$this->response($this->json($result), 200);
+			}
+			$this->response('',204);
+		}
+	}
 }
 // Initiiate Library
 
