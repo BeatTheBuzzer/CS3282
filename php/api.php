@@ -75,9 +75,9 @@ class API extends REST {
 	 *	Return: {"result":"Registration success"} or {"result":"Registration failed"}
 	 */
 	private function register(){
-		$name = $this -> _request['name'];
-		$email = $this -> _request['email'];
-		$pwd = $this -> _request['pwd'];
+		$name = mysql_real_escape_string($this -> _request['name']);
+		$email = mysql_real_escape_string($this -> _request['email']);
+		$pwd = mysql_real_escape_string($this -> _request['pwd']);
 		$sql=mysql_query("INSERT INTO user (name,email,password) VALUES('$name', '$email','$pwd')",$this->db);
 		if($sql){
 			$this->response(("{\"result\":\"Registration success\"}"), 200);
@@ -90,8 +90,8 @@ class API extends REST {
 	 *	Return: if login is successfule, return user_id,else return {"result":"No such user"}
 	 */
 	private function login(){
-		$email = $this -> _request['email'];
-		$pwd = $this -> _request['pwd'];
+		$email = mysql_real_escape_string($this -> _request['email']);
+		$pwd = mysql_real_escape_string($this -> _request['pwd']);
 		$sql=mysql_query("SELECT user_id FROM user WHERE email = '$email' AND password = '$pwd'",$this->db);
 		if(mysql_num_rows($sql) > 0){
 			$result = array();
@@ -107,8 +107,8 @@ class API extends REST {
 	 *	Return all buses with their time in a particular bus stop
 	 */
 	private function businfo(){
-		$stop_id=$this -> _request['stop_id'];
-		$query="SELECT schedule.route_id, name, time FROM route,schedule WHERE schedule.stop_id='$stop_id' AND schedule.route_id = route.route_id AND time >= curtime() GROUP BY route_id ORDER BY time";
+		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
+		$query = "SELECT schedule.route_id, name, time FROM route,schedule WHERE schedule.stop_id='$stop_id' AND schedule.route_id = route.route_id AND time >= curtime() GROUP BY route_id ORDER BY time";
 		$sql=mysql_query($query,$this->db);
 
 		if(mysql_num_rows($sql) > 0){
@@ -142,9 +142,9 @@ class API extends REST {
 	 * Provide crowdedness info to the database
 	 */
 	private function provide(){
-		$route_id = $this -> _request['route_id'];;
-		$stop_id = $this -> _request['stop_id'];
-		$crowded=$this -> _request['crowded'];
+		$route_id = mysql_real_escape_string($this -> _request['route_id']);
+		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
+		$crowded = mysql_real_escape_string($this -> _request['crowded']);
 		$query="INSERT INTO info (route_id, stop_id, time, date, crowded) VALUES ($route_id, '$stop_id', CURTIME(), CURDATE(), '$crowded')";
 		$sql = mysql_query($query, $this->db);
 		if($sql){
@@ -157,8 +157,8 @@ class API extends REST {
 	 *	Return crowdedness info from the data posted in the current day.
 	 */
 	private function current(){
-		$route_id = $this -> _request['route_id'];
-		$stop_id = $this -> _request['stop_id'];
+		$route_id = mysql_real_escape_string($this -> _request['route_id']);
+		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
 		$table = 'bus95';
 		$result = array();
 
@@ -174,7 +174,7 @@ class API extends REST {
 		}
 
 		//	Get the info of the previous stop
-		$query = "SELECT stop_id, crowded, SUBTIME(CURTIME(), time) AS difference from info where stop_id = (select stop_id from $table where idx = (select (idx-1) from bus95 where stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() LIMIT 1";
+		$query = "SELECT stop_id, crowded, SUBTIME(CURTIME(), time) AS difference from info where stop_id = (SELECT stop_id FROM $table WHERE idx = (SELECT (idx-1) FROM bus95 WHERE stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() ORDER BY difference LIMIT 1";
 		$sql=mysql_query($query,$this->db);
 		if($sql){
 			if(mysql_num_rows($sql) > 0){
@@ -194,8 +194,8 @@ class API extends REST {
 	 *	Return the historical data of the crowdedness info
 	 */
 	private function history(){
-		$route_id = $this -> _request['route_id'];
-		$stop_id = $this -> _request['stop_id'];
+		$route_id = mysql_real_escape_string($this -> _request['route_id']);
+		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
 
 		$query ="SELECT (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date < curdate() AND time < addtime ( curtime(), '00:10:00') AND crowded ='yes' AND time > subtime(curtime(),'00:05:00')) AS yes, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date < curdate() AND time < addtime ( curtime(), '00:10:00') AND time > subtime(curtime(),'00:05:00') AND crowded = 'no') AS no";
 		$sql=mysql_query($query,$this->db);
@@ -218,7 +218,7 @@ class API extends REST {
 
 	private function busname(){
 
-		$stop_id = $this->_request['stop_id'];
+		$stop_id = mysql_real_escape_string($this->_request['stop_id']);
 		$query = "SELECT name FROM bus_stop WHERE stop_id='$stop_id'";
 		$sql=mysql_query($query,$this->db);
 		if($sql){
