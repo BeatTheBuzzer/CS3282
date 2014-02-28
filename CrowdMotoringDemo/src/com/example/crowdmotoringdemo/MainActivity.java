@@ -46,15 +46,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 public class MainActivity extends Activity implements ServerCommunicationCallback{
-	/*
-	boolean clicked96 = false;
-	boolean clickedCircle = false;
-	boolean clicked183 = false;
-	
-	Button mButton96;
-	Button mButtonCircleLine;
-	Button mButton183;
-*/
 	
 	StopListAdapter stopArray;
 	ListView stopList;
@@ -92,7 +83,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-            	refreshBusStopList();
+            	refreshStopList();
             	searchTextFilter();
             }
 
@@ -137,7 +128,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
         				e.printStackTrace();
         			}
         		}
-        		refreshBusStopList();
+        		refreshStopList();
         		searchTextFilter();
         	}
 
@@ -170,7 +161,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 				stopArrayJson.optJSONObject(i).put("distance", 0.0);
 			}
 			
-			this.refreshBusStopList();
+			this.refreshStopList();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -180,7 +171,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 		
 	}
 
-	protected void refreshBusStopList(){
+	protected void refreshStopList(){
 		stopArray.clear();
 		Collections.sort(stopArrayJsonList, new JSONComparatorByDistance());
 		ArrayList<StopListElement> tempList = new ArrayList<StopListElement>();

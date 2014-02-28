@@ -1,7 +1,9 @@
 package com.example.crowdmotoringdemo;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import org.json.JSONArray;
@@ -9,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.crowdmotoringdemo.R;
+import com.example.crowdmotoringdemo.customadapter.StopListElement;
 import com.example.crowdmotoringdemo.customadapter.TransportElementGetCrowdedness;
 import com.example.crowdmotoringdemo.customadapter.TransportListAdapter;
 import com.example.crowdmotoringdemo.customadapter.TransportListElement;
@@ -20,10 +23,13 @@ import com.example.crowdmotoringdemo.variables.Constant;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.Time;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 public class StopInfoActivity extends Activity implements ServerCommunicationCallback{
@@ -34,6 +40,8 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 	TransportListAdapter transportArray;
 	ListView transportList;
 	JSONArray transportArrayJson;
+	EditText searchText;
+	ArrayList<TransportListElement> transportArrayBackup;
 	
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -43,7 +51,8 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 		
 		transportList = (ListView) findViewById(R.id.list);
 		
-        
+		searchText = (EditText) findViewById(R.id.search_text);
+		transportArrayBackup = new ArrayList<TransportListElement>();
         transportArray = new TransportListAdapter(getApplicationContext(), R.layout.transport_list_element);
         transportArray.setStopId(stopId);
         transportList.setAdapter(transportArray);
@@ -60,6 +69,23 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 			}
 				
     	});
+        
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            	refreshTransportList();
+            	searchTextFilter();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            } 
+
+        });
 	}
 	
 	protected void onStart(){
@@ -70,10 +96,6 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 		ServerCommunication retriever = new ServerCommunication();
 		retriever.setCallback(this);
         retriever.execute(QueryBuilder.getBusInfo(stopId));
-	}
-	
-	protected void setCrowdedness(){
-		
 	}
 
 	@Override
@@ -106,11 +128,32 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 				
 				TransportElementGetCrowdedness.getCrowdedness(temp, stopId, transportArray, transportList);
 				transportArray.add(temp);
+				transportArrayBackup.add(temp);
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	protected void refreshTransportList(){
+		transportArray.clear();
+		transportArray.addAll(transportArrayBackup);
+	}
+	
+	protected void searchTextFilter(){
+		int size = transportArray.getCount();
+		String search = searchText.getText().toString().toLowerCase(Locale.ENGLISH);
+		for(int i = 0; i < size; i++){
+			TransportListElement element = transportArray.getItem(i);
+			if(!element.getTransportName().toLowerCase(Locale.ENGLISH).startsWith(search)){
+				transportArray.remove(element);
+				size--;
+				i--;
+			}
+		}
+		
+		transportArray.notifyDataSetChanged();
 	}
 
 }

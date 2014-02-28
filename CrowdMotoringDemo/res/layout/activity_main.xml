@@ -24,7 +24,7 @@
             android:inputType="text"
             android:text=""
             android:hint="Search for bus or MRT"
-            android:textColor="#FFFFFF"
+            android:textColor="#333333"
             android:textSize="12dp" />
     	
     	<LinearLayout
