@@ -18,7 +18,7 @@ class API extends REST {
 	}
 
 	/*
-	 *  Database connection 
+	 *  Initial Database connection 
 	 */
 	private function dbConnect(){
 		$this->db = mysql_connect(self::DB_SERVER,self::DB_USER,self::DB_PASSWORD);
@@ -27,21 +27,23 @@ class API extends REST {
 	}
 
 	/*
-	 * Public method for access api.
+	 * Public method for process the api.
 	 * This method dynmically call the method based on the query string
 	 *
 	 */
 	public function processApi(){
 		$func = strtolower(trim(str_replace("/","",$_REQUEST['rquest'])));
+		// If the method exists
 		if((int)method_exists($this,$func) > 0)
 			$this->$func();
+		// If the method not exist with in this class, response would be "Page not found".
 		else
-			$this->response('',404);				// If the method not exist with in this class, response would be "Page not found".
+			$this->response('',404);
 	}
 
 
 	/*
-	 *	Encode array into JSON
+	 *	Encode the data array into JSON
 	 */
 	private function json($data){
 		if(is_array($data)){
@@ -49,49 +51,63 @@ class API extends REST {
 		}
 	}
 
+	/*
+	 *	Used for debugging purpose
+	 */
 	private function users(){	
-		// debugging purpose
+		
 		$sql = mysql_query("SELECT user_id, name FROM user", $this->db);
 		if(mysql_num_rows($sql) > 0){
 			$result = array();
 			while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+				//	append to the result array
 				$result[] = $rlt;
 			}
-			// If success everythig is good send header as "OK" and return list of users in JSON format
+			// If query is success and everythig is good, send header as "OK" and return list of users in JSON format
 			$this->response($this->json($result), 200);
 		}
-		$this->response('',204);	// If no records "No Content" status
+		// If no records "No Content" status
+		$this->response('',204);
 	}
 
+	/*
+	 *	register an account, parameter: name, email and password
+	 *	Return: {"result":"Registration success"} or {"result":"Registration failed"}
+	 */
 	private function register(){
-		$name = $this->_request['name'];
-		$email = $this->_request['email'];
-		$pwd = $this->_request['pwd'];
+		$name = $this -> _request['name'];
+		$email = $this -> _request['email'];
+		$pwd = $this -> _request['pwd'];
 		$sql=mysql_query("INSERT INTO user (name,email,password) VALUES('$name', '$email','$pwd')",$this->db);
 		if($sql){
-			$this->response(("{\"Registration success\"}"), 200);
+			$this->response(("{\"result\":\"Registration success\"}"), 200);
 		}
-		$this->response(("{\"Registration failed\"}"), 200);
+		$this->response(("{\"result\":\"Registration failed\"}"), 200);
 	}
 
+	/*
+	 *	Login, parameter: email and password
+	 *	Return: if login is successfule, return user_id,else return {"result":"No such user"}
+	 */
 	private function login(){
-		$email = $this->_request['email'];
-		$pwd = $this->_request['pwd'];
+		$email = $this -> _request['email'];
+		$pwd = $this -> _request['pwd'];
 		$sql=mysql_query("SELECT user_id FROM user WHERE email = '$email' AND password = '$pwd'",$this->db);
 		if(mysql_num_rows($sql) > 0){
 			$result = array();
 			$result = mysql_fetch_array($sql,MYSQL_ASSOC);
 			$this->response($this->json($result), 200);
 		}
-		$this->response(("{\"No such user\"}"), 200);
+		$this->response(("{\"result\":\"No such user\"}"), 200);
 	}
 
 
-	/* return all buses with their time in a particular bus stop
-	   SELECT name, time FROM route,stop_time WHERE stop_time.stop_id='B18331' AND stop_time.route_id = route.route_id;
+	/* 
+	 *	Parameter: stop_id
+	 *	Return all buses with their time in a particular bus stop
 	 */
 	private function businfo(){
-		$stop_id=$this->_request['stop_id'];
+		$stop_id=$this -> _request['stop_id'];
 		$query="SELECT schedule.route_id, name, time FROM route,schedule WHERE schedule.stop_id='$stop_id' AND schedule.route_id = route.route_id AND time >= curtime() GROUP BY route_id ORDER BY time";
 		$sql=mysql_query($query,$this->db);
 
@@ -105,8 +121,9 @@ class API extends REST {
 		}
 		$this->response('',204);
 	}
+
 	/*
-	   return all bus stops with their GPS coordinates
+	 *	Return all bus stops with their GPS coordinates
 	 */
 	private function allstops(){
 		$query="SELECT stop_id, name, location, latitude, longitude FROM bus_stop";
@@ -121,7 +138,9 @@ class API extends REST {
 		}
 		$this->response('',204);
 	}
-
+	/*
+	 * Provide crowdedness info to the database
+	 */
 	private function provide(){
 		$route_id = $this -> _request['route_id'];;
 		$stop_id = $this -> _request['stop_id'];
@@ -134,11 +153,16 @@ class API extends REST {
 		$this->response(("{\"result\":\"Failed\"}"), 200);
 	}
 
+	/*
+	 *	Return crowdedness info from the data posted in the current day.
+	 */
 	private function current(){
-		$route_id = $this->_request['route_id'];
+		$route_id = $this -> _request['route_id'];
 		$stop_id = $this -> _request['stop_id'];
 		$table = 'bus95';
 		$result = array();
+
+		// Get the mapping table from bus to its route
 		$query = "SELECT listofstops FROM route WHERE route_id= $route_id";
 		$sql=mysql_query($query,$this->db);
 		if(mysql_num_rows($sql) > 0){
@@ -148,8 +172,8 @@ class API extends REST {
 				$table = $rlt['listofstops'];
 			}
 		}
-		//$this->response($this->json($result), 200);
 
+		//	Get the info of the previous stop
 		$query = "SELECT stop_id, crowded, SUBTIME(CURTIME(), time) AS difference from info where stop_id = (select stop_id from $table where idx = (select (idx-1) from bus95 where stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() LIMIT 1";
 		$sql=mysql_query($query,$this->db);
 		if($sql){
@@ -161,14 +185,16 @@ class API extends REST {
 				// If success everythig is good send header as "OK" and return list of users in JSON format				
 				$this->response($this->json($result), 200);
 			}
-			//$this->response(("{\"No data\"}"),200);
+			$this->response('',204);
 		}
 
-		$this->response('',204);
 	}
 
+	/*
+	 *	Return the historical data of the crowdedness info
+	 */
 	private function history(){
-		$route_id = $this->_request['route_id'];
+		$route_id = $this -> _request['route_id'];
 		$stop_id = $this -> _request['stop_id'];
 
 		$query ="SELECT (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date < curdate() AND time < addtime ( curtime(), '00:10:00') AND crowded ='yes' AND time > subtime(curtime(),'00:05:00')) AS yes, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date < curdate() AND time < addtime ( curtime(), '00:10:00') AND time > subtime(curtime(),'00:05:00') AND crowded = 'no') AS no";
@@ -186,7 +212,9 @@ class API extends REST {
 		}
 	}
 
-
+	/*
+	 *	Return the bus name according to the stop id
+	 */
 
 	private function busname(){
 
