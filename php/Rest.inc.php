@@ -1,6 +1,5 @@
 <?php
 	/* File : Rest.inc.php
-	 * Author : Arun Kumar Sekar
 	*/
 	class REST {
 		
@@ -26,6 +25,9 @@
 			exit;
 		}
 		
+		/*
+		 *	HTTP code
+		 */
 		private function get_status_message(){
 			$status = array(
 						100 => 'Continue',  
