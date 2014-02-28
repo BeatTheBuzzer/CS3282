@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 	Button mButton183;
 */
 	
-	ArrayAdapter<String> stopArray;
+	StopListAdapter stopArray;
 	ListView stopList;
 	ArrayList<JSONObject> stopArrayJsonList;
 	LocationManager locationManager;
@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 		
 		stopList = (ListView) findViewById(R.id.list);
         
-        stopArray = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_list_item_custom);
+        stopArray = new StopListAdapter(getApplicationContext(), R.layout.stop_list_element);
         stopList.setAdapter(stopArray);
         
         stopList.setOnItemClickListener(new AdapterView.OnItemClickListener() {  
@@ -198,9 +198,16 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 	protected void sortBusStop(){
 		stopArray.clear();
 		Collections.sort(stopArrayJsonList, new JSONComparatorByDistance());
+		ArrayList<StopListElement> tempList = new ArrayList<StopListElement>();
 		for(int i = 0; i < stopArrayJsonList.size(); i++){
 			JSONObject currBusStop = stopArrayJsonList.get(i);
-			stopArray.add(currBusStop.optString("name"));
+			StopListElement temp = new StopListElement();
+			temp.setName(currBusStop.optString("name"));
+			temp.setDistance(currBusStop.optDouble("distance"));
+			tempList.add(temp);
 		}
+		
+		stopArray.addAll(tempList);
+//		stopList.setAdapter(stopArray);
 	}
 }

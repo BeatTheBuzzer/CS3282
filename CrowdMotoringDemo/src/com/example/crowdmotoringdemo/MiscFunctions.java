@@ -9,6 +9,7 @@ public class MiscFunctions {
 	    dist = Math.acos(dist);
 	    dist = rad2deg(dist);
 	    dist = dist * 60 * 1.1515;
+	    dist = dist * 1.60934 * 1000; // Distance calculated above is in miles; convert to metres
 	    return (dist);
 	}
 
