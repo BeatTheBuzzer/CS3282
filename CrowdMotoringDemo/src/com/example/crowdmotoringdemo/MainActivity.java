@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -34,11 +35,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 public class MainActivity extends Activity implements ServerCommunicationCallback{
@@ -55,6 +59,8 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 	StopListAdapter stopArray;
 	ListView stopList;
 	ArrayList<JSONObject> stopArrayJsonList;
+	EditText searchText;
+	
 	LocationManager locationManager;
 	LocationListener locationListener;
 	
@@ -65,6 +71,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 		
 		stopList = (ListView) findViewById(R.id.list);
         
+		searchText = (EditText) findViewById(R.id.search_text);
         stopArray = new StopListAdapter(getApplicationContext(), R.layout.stop_list_element);
         stopList.setAdapter(stopArray);
         
@@ -81,50 +88,23 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 			}
 				
     	});
-		
-		/*
-		mButton96 = (Button) findViewById(R.id.bus_96_button);
-		mButtonCircleLine = (Button) findViewById(R.id.mrt_circle_button);
-		mButton183 = (Button) findViewById(R.id.bus_183_button);
-		
-		mButton96.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if(!clicked96) mButton96.setBackgroundColor(Color.rgb(255,165,0));
-				else mButton96.setBackgroundResource(android.R.drawable.btn_default);
-				clicked96 = !clicked96;
-				
-				// Test php call
-				if(clicked96){
-					
-				}
-			}
-		});
-		
-		mButtonCircleLine.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if(!clickedCircle) mButtonCircleLine.setBackgroundColor(Color.rgb(255,165,0));
-				else mButtonCircleLine.setBackgroundResource(android.R.drawable.btn_default);
-				clickedCircle = !clickedCircle;
-			}
-		});
+        
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+            	refreshBusStopList();
+            	searchTextFilter();
+            }
 
-		mButton183.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				if(!clicked183) mButton183.setBackgroundColor(Color.rgb(255,165,0));
-				else mButton183.setBackgroundResource(android.R.drawable.btn_default);
-				clicked183 = !clicked183;
-			}
-		});
-		*/
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            } 
+
+        });
 	}
 	
 	@Override
@@ -157,7 +137,8 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
         				e.printStackTrace();
         			}
         		}
-        		sortBusStop();
+        		refreshBusStopList();
+        		searchTextFilter();
         	}
 
         	public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -189,7 +170,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 				stopArrayJson.optJSONObject(i).put("distance", 0.0);
 			}
 			
-			this.sortBusStop();
+			this.refreshBusStopList();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -199,7 +180,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 		
 	}
 
-	protected void sortBusStop(){
+	protected void refreshBusStopList(){
 		stopArray.clear();
 		Collections.sort(stopArrayJsonList, new JSONComparatorByDistance());
 		ArrayList<StopListElement> tempList = new ArrayList<StopListElement>();
@@ -213,5 +194,20 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 		
 		stopArray.addAll(tempList);
 //		stopList.setAdapter(stopArray);
+	}
+	
+	protected void searchTextFilter(){
+		int size = stopArray.getCount();
+		String search = searchText.getText().toString().toLowerCase(Locale.ENGLISH);
+		for(int i = 0; i < size; i++){
+			StopListElement element = stopArray.getItem(i);
+			if(!element.getName().toLowerCase(Locale.ENGLISH).startsWith(search)){
+				stopArray.remove(element);
+				size--;
+				i--;
+			}
+		}
+		
+		stopArray.notifyDataSetChanged();
 	}
 }
