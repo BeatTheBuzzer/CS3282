@@ -153,7 +153,6 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
         				e.printStackTrace();
         			}
         		}
-        		System.out.println("I am called!");
         		sortBusStop();
         	}
 
