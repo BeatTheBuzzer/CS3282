@@ -1,6 +1,6 @@
 <?php
 	/* File : Rest.inc.php
-	 * Author : Arun Kumar Sekar
+	 * Reference: http://www.9lessons.info/2012/05/create-restful-services-api-in-php.html
 	*/
 	class REST {
 		
@@ -26,6 +26,9 @@
 			exit;
 		}
 		
+		/*
+		 *	HTTP code
+		 */
 		private function get_status_message(){
 			$status = array(
 						100 => 'Continue',  
