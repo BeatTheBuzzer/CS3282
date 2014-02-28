@@ -1,8 +1,11 @@
-package com.example.crowdmotoringdemo;
+package com.example.crowdmotoringdemo.customadapter;
 
 import java.util.List;
 
 import com.example.crowdmotoringdemo.R;
+import com.example.crowdmotoringdemo.R.id;
+import com.example.crowdmotoringdemo.R.layout;
+import com.example.crowdmotoringdemo.variables.Constant;
 
 import android.content.ClipData.Item;
 import android.content.Context;
@@ -14,14 +17,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class StopViewListAdapter extends ArrayAdapter<StopViewListElement>{
-		String stopId;
+public class TransportListAdapter extends ArrayAdapter<TransportListElement>{
+		protected String stopId;
 
-		public StopViewListAdapter(Context context, int textViewResourceId) {
+		public TransportListAdapter(Context context, int textViewResourceId) {
 		    super(context, textViewResourceId);
 		}
 
-		public StopViewListAdapter(Context context, int resource, List<StopViewListElement> items) {
+		public TransportListAdapter(Context context, int resource, List<TransportListElement> items) {
 		    super(context, resource, items);
 		}
 
@@ -33,13 +36,13 @@ public class StopViewListAdapter extends ArrayAdapter<StopViewListElement>{
 
 		        LayoutInflater vi;
 		        vi = LayoutInflater.from(getContext());
-		        v = vi.inflate(R.layout.stop_view_list_element, null);
+		        v = vi.inflate(R.layout.transport_list_element, null);
 		        
 		        if(position%2 == 0) v.setBackgroundColor(Color.parseColor(Constant.COLOR_WHITE));
 			    else v.setBackgroundColor(Color.parseColor(Constant.COLOR_DARKER_WHITE));
 		    }
 
-		    final StopViewListElement p = getItem(position);
+		    final TransportListElement p = getItem(position);
 
 		    if (p != null) {
 		    	TextView transportName = (TextView) v.findViewById(R.id.transport_name);
@@ -63,5 +66,9 @@ public class StopViewListAdapter extends ArrayAdapter<StopViewListElement>{
 		    
 		    return v;
 
+		}
+		
+		public void setStopId(String stopId){
+			this.stopId = stopId;
 		}
 }

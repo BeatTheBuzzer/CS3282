@@ -1,4 +1,4 @@
-package com.example.crowdmotoringdemo;
+package com.example.crowdmotoringdemo.servercommunication;
 
 import java.io.IOException;
 import java.net.URL;
@@ -10,15 +10,17 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import com.example.crowdmotoringdemo.variables.Constant;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 
-public class DataRetriever extends AsyncTask<String, Object, String>{
+public class ServerCommunication extends AsyncTask<String, Object, String>{
 	
-	protected DataRetrieverResponse caller;
+	protected ServerCommunicationCallback caller;
 	protected String requestStr;
 	
-	public void setCallback(DataRetrieverResponse caller){
+	public void setCallback(ServerCommunicationCallback caller){
 		this.caller = caller;
 	}
 	

@@ -1,4 +1,4 @@
-package com.example.crowdmotoringdemo;
+package com.example.crowdmotoringdemo.variables;
 
 public class Constant {
 	public static final String EXTRA_STOP_ID = "STOP_ID";

@@ -16,11 +16,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.crowdmotoringdemo.Constant;
-import com.example.crowdmotoringdemo.DataRetriever;
-import com.example.crowdmotoringdemo.DataRetrieverResponse;
-import com.example.crowdmotoringdemo.QueryBuilder;
 import com.example.crowdmotoringdemo.R;
+import com.example.crowdmotoringdemo.customadapter.StopListAdapter;
+import com.example.crowdmotoringdemo.customadapter.StopListElement;
+import com.example.crowdmotoringdemo.servercommunication.QueryBuilder;
+import com.example.crowdmotoringdemo.servercommunication.ServerCommunication;
+import com.example.crowdmotoringdemo.servercommunication.ServerCommunicationCallback;
+import com.example.crowdmotoringdemo.variables.Constant;
+import com.example.crowdmotoringdemo.variables.JSONComparatorByDistance;
+import com.example.crowdmotoringdemo.variables.MiscFunctions;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -37,7 +41,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class MainActivity extends Activity implements DataRetrieverResponse{
+public class MainActivity extends Activity implements ServerCommunicationCallback{
 	/*
 	boolean clicked96 = false;
 	boolean clickedCircle = false;
@@ -71,7 +75,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 				
 				String stopId = stopArrayJsonList.get(position).optString("stop_id");
 				
-				Intent stopViewScreen = new Intent(getApplicationContext(), StopView.class);
+				Intent stopViewScreen = new Intent(getApplicationContext(), StopInfoActivity.class);
 				stopViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
 				startActivity(stopViewScreen);
 			}
@@ -129,7 +133,7 @@ public class MainActivity extends Activity implements DataRetrieverResponse{
 		
 		System.out.println("onCreate finishing");
 		System.out.println(QueryBuilder.getAllStops());
-		DataRetriever retriever = new DataRetriever();
+		ServerCommunication retriever = new ServerCommunication();
 		retriever.setCallback(this);
         retriever.execute(QueryBuilder.getAllStops());
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);

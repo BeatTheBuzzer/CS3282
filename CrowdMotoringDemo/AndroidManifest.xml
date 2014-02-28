@@ -26,9 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="StopView">
+        <activity android:name="StopInfoActivity">
         </activity>
-        <activity android:name="TransportInfoView">
+        <activity android:name="TransportInfoActivity">
         </activity>
     </application>
 

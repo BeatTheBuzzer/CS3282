@@ -4,6 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.crowdmotoringdemo.servercommunication.QueryBuilder;
+import com.example.crowdmotoringdemo.servercommunication.ServerCommunication;
+import com.example.crowdmotoringdemo.servercommunication.ServerCommunicationCallback;
+import com.example.crowdmotoringdemo.variables.Constant;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +19,7 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-public class TransportInfoView extends Activity implements DataRetrieverResponse{
+public class TransportInfoActivity extends Activity implements ServerCommunicationCallback{
 	
 	final String crowdednessRealTimeNoReport = "Currently there is no report on the crowdedness of this bus.";
 	final String crowdednessHistoricalNoReport = "Historically, there is no report on the crowdedness of this bus.";
@@ -29,7 +34,7 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 	
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.transport_info_view);
+		setContentView(R.layout.transport_info_activity);
 		
 		stopId = getIntent().getStringExtra(Constant.EXTRA_STOP_ID);
 		routeId = getIntent().getIntExtra(Constant.EXTRA_ROUTE_ID, -1);
@@ -43,7 +48,7 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				DataRetriever poster = new DataRetriever();
+				ServerCommunication poster = new ServerCommunication();
 		        poster.execute(QueryBuilder.post(routeId, stopId, true));
 				crowdednessTrueButton.setVisibility(View.GONE);
 				crowdednessFalseButton.setVisibility(View.GONE);
@@ -54,7 +59,7 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				DataRetriever poster = new DataRetriever();
+				ServerCommunication poster = new ServerCommunication();
 		        poster.execute(QueryBuilder.post(routeId, stopId, false));
 				crowdednessTrueButton.setVisibility(View.GONE);
 				crowdednessFalseButton.setVisibility(View.GONE);
@@ -67,11 +72,11 @@ public class TransportInfoView extends Activity implements DataRetrieverResponse
 		
 		System.out.println("onCreate finishing");
 		System.out.println(QueryBuilder.getCurrentCrowdedness(stopId, routeId));
-		DataRetriever retrieverHistorical = new DataRetriever();
+		ServerCommunication retrieverHistorical = new ServerCommunication();
 		retrieverHistorical.setCallback(this);
         retrieverHistorical.execute(QueryBuilder.getCurrentCrowdedness(stopId, routeId));
         
-        DataRetriever retrieverCurrent = new DataRetriever();
+        ServerCommunication retrieverCurrent = new ServerCommunication();
 		retrieverCurrent.setCallback(this);
         retrieverCurrent.execute(QueryBuilder.getHistoricalCrowdedness(stopId, routeId));
 	}

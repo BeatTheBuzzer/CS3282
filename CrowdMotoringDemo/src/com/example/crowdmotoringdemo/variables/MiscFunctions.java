@@ -1,4 +1,4 @@
-package com.example.crowdmotoringdemo;
+package com.example.crowdmotoringdemo.variables;
 
 import org.json.JSONObject;
 

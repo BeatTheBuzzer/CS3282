@@ -1,4 +1,4 @@
-package com.example.crowdmotoringdemo;
+package com.example.crowdmotoringdemo.customadapter;
 
 public class StopListElement {
 	protected String stopName;

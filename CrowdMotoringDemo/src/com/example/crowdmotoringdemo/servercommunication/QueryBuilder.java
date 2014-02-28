@@ -1,4 +1,6 @@
-package com.example.crowdmotoringdemo;
+package com.example.crowdmotoringdemo.servercommunication;
+
+import com.example.crowdmotoringdemo.variables.Constant;
 
 public class QueryBuilder {
 	public static String getAllStops(){

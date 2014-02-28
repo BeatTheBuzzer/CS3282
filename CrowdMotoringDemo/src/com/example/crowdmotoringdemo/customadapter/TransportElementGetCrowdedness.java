@@ -1,24 +1,29 @@
-package com.example.crowdmotoringdemo;
+package com.example.crowdmotoringdemo.customadapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.crowdmotoringdemo.servercommunication.QueryBuilder;
+import com.example.crowdmotoringdemo.servercommunication.ServerCommunication;
+import com.example.crowdmotoringdemo.servercommunication.ServerCommunicationCallback;
+import com.example.crowdmotoringdemo.variables.Constant;
+
 import android.widget.ListView;
 
-public class StopViewGetCrowdedness implements DataRetrieverResponse{
-	protected StopViewListAdapter adapter;
+public class TransportElementGetCrowdedness implements ServerCommunicationCallback{
+	protected TransportListAdapter adapter;
 	protected ListView listView;
-	protected StopViewListElement e;
+	protected TransportListElement e;
 	protected String stopId;
 	protected volatile boolean isCurrent;
 	
-	public static void getCrowdedness(StopViewListElement e, String stopId, StopViewListAdapter adapter, ListView listView){
-		StopViewGetCrowdedness getter = new StopViewGetCrowdedness(e, stopId, adapter, listView);
+	public static void getCrowdedness(TransportListElement e, String stopId, TransportListAdapter adapter, ListView listView){
+		TransportElementGetCrowdedness getter = new TransportElementGetCrowdedness(e, stopId, adapter, listView);
 		getter.retrieveCrowdednessInfo();
 	}
 	
-	protected StopViewGetCrowdedness(StopViewListElement e, String stopId, StopViewListAdapter adapter, ListView listView){
+	protected TransportElementGetCrowdedness(TransportListElement e, String stopId, TransportListAdapter adapter, ListView listView){
 		this.e = e;
 		this.stopId = stopId;
 		this.isCurrent = false;
@@ -27,11 +32,11 @@ public class StopViewGetCrowdedness implements DataRetrieverResponse{
 	}
 	
 	protected void retrieveCrowdednessInfo(){
-		DataRetriever retrieverHistorical = new DataRetriever();
+		ServerCommunication retrieverHistorical = new ServerCommunication();
 		retrieverHistorical.setCallback(this);
         retrieverHistorical.execute(QueryBuilder.getCurrentCrowdedness(stopId, e.getRouteId()));
         
-        DataRetriever retrieverCurrent = new DataRetriever();
+        ServerCommunication retrieverCurrent = new ServerCommunication();
 		retrieverCurrent.setCallback(this);
         retrieverCurrent.execute(QueryBuilder.getHistoricalCrowdedness(stopId, e.getRouteId()));
 	}

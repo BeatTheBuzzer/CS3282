@@ -1,12 +1,12 @@
-package com.example.crowdmotoringdemo;
+package com.example.crowdmotoringdemo.customadapter;
 
-public class StopViewListElement {
+public class TransportListElement {
 	protected String transportName;
 	protected long arrivalTimeMin;
 	protected int routeId;
 	protected int crowdedness;
 	
-	public StopViewListElement(){
+	public TransportListElement(){
 		
 	}
 	

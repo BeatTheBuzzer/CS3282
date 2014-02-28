@@ -1,7 +1,12 @@
-package com.example.crowdmotoringdemo;
+package com.example.crowdmotoringdemo.customadapter;
 
 import java.text.DecimalFormat;
 import java.util.List;
+
+import com.example.crowdmotoringdemo.R;
+import com.example.crowdmotoringdemo.R.id;
+import com.example.crowdmotoringdemo.R.layout;
+import com.example.crowdmotoringdemo.variables.Constant;
 
 import android.content.Context;
 import android.graphics.Color;

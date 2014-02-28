@@ -9,6 +9,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.crowdmotoringdemo.R;
+import com.example.crowdmotoringdemo.customadapter.TransportElementGetCrowdedness;
+import com.example.crowdmotoringdemo.customadapter.TransportListAdapter;
+import com.example.crowdmotoringdemo.customadapter.TransportListElement;
+import com.example.crowdmotoringdemo.servercommunication.QueryBuilder;
+import com.example.crowdmotoringdemo.servercommunication.ServerCommunication;
+import com.example.crowdmotoringdemo.servercommunication.ServerCommunicationCallback;
+import com.example.crowdmotoringdemo.variables.Constant;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,26 +26,26 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class StopView extends Activity implements DataRetrieverResponse{
+public class StopInfoActivity extends Activity implements ServerCommunicationCallback{
 	
 	String stopId;
 	int currentQuery;
 	
-	StopViewListAdapter transportArray;
+	TransportListAdapter transportArray;
 	ListView transportList;
 	JSONArray transportArrayJson;
 	
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.stop_view);
+		setContentView(R.layout.stop_info_activity);
 		
 		stopId = getIntent().getStringExtra(Constant.EXTRA_STOP_ID);
 		
 		transportList = (ListView) findViewById(R.id.list);
 		
         
-        transportArray = new StopViewListAdapter(getApplicationContext(), R.layout.stop_view_list_element);
-        transportArray.stopId = stopId;
+        transportArray = new TransportListAdapter(getApplicationContext(), R.layout.transport_list_element);
+        transportArray.setStopId(stopId);
         transportList.setAdapter(transportArray);
         
         transportList.setOnItemClickListener(new AdapterView.OnItemClickListener() {  
@@ -46,7 +53,7 @@ public class StopView extends Activity implements DataRetrieverResponse{
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
 				// TODO Auto-generated method stub
-				Intent transportViewScreen = new Intent(getApplicationContext(), TransportInfoView.class);
+				Intent transportViewScreen = new Intent(getApplicationContext(), TransportInfoActivity.class);
 				transportViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
 				transportViewScreen.putExtra(Constant.EXTRA_ROUTE_ID, transportArray.getItem(position).getRouteId());
 				startActivity(transportViewScreen);
@@ -60,7 +67,7 @@ public class StopView extends Activity implements DataRetrieverResponse{
 		
 		System.out.println("onCreate finishing");
 		System.out.println(QueryBuilder.getBusInfo(stopId));
-		DataRetriever retriever = new DataRetriever();
+		ServerCommunication retriever = new ServerCommunication();
 		retriever.setCallback(this);
         retriever.execute(QueryBuilder.getBusInfo(stopId));
 	}
@@ -79,7 +86,7 @@ public class StopView extends Activity implements DataRetrieverResponse{
 			transportArray.clear();
 			
 			for(int i = 0; i < transportArrayJson.length(); i++){
-				StopViewListElement temp = new StopViewListElement();
+				TransportListElement temp = new TransportListElement();
 				JSONObject data = transportArrayJson.optJSONObject(i);
 				
 				temp.setTransportName(data.optString("name"));
@@ -97,7 +104,7 @@ public class StopView extends Activity implements DataRetrieverResponse{
 				
 				temp.setRouteId(data.optInt("route_id"));
 				
-				StopViewGetCrowdedness.getCrowdedness(temp, stopId, transportArray, transportList);
+				TransportElementGetCrowdedness.getCrowdedness(temp, stopId, transportArray, transportList);
 				transportArray.add(temp);
 			}
 		} catch (JSONException e) {
