@@ -15,4 +15,7 @@ public class Constant {
 	public static final int CROWDEDNESS_TRUE = 1;
 	public static final int CROWDEDNESS_FALSE = -1;
 	public static final int CROWDEDNESS_NO_DATA = 0;
+	
+	public static final String COLOR_WHITE = "#FFFFFF";
+	public static final String COLOR_DARKER_WHITE = "#EEEEEE";
 }

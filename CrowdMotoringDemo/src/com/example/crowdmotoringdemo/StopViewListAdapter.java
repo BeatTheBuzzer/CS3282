@@ -6,6 +6,7 @@ import com.example.crowdmotoringdemo.R;
 
 import android.content.ClipData.Item;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,9 @@ public class StopViewListAdapter extends ArrayAdapter<StopViewListElement>{
 		        LayoutInflater vi;
 		        vi = LayoutInflater.from(getContext());
 		        v = vi.inflate(R.layout.stop_view_list_element, null);
+		        
+		        if(position%2 == 0) v.setBackgroundColor(Color.parseColor(Constant.COLOR_WHITE));
+			    else v.setBackgroundColor(Color.parseColor(Constant.COLOR_DARKER_WHITE));
 		    }
 
 		    final StopViewListElement p = getItem(position);
