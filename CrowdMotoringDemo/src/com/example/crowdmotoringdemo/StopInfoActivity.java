@@ -64,12 +64,12 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
 				// TODO Auto-generated method stub
-				Intent transportViewScreen = new Intent(getApplicationContext(), TransportInfoActivity.class);
-				transportViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
-				transportViewScreen.putExtra(Constant.EXTRA_ROUTE_ID, transportArray.getItem(position).getRouteId());
-				transportViewScreen.putExtra(Constant.EXTRA_STOP_NAME, stopName);
-				transportViewScreen.putExtra(Constant.EXTRA_TRANSPORT_NAME, transportArray.getItem(position).getTransportName());
-				startActivity(transportViewScreen);
+				Intent transportInfoActivityScreen = new Intent(getApplicationContext(), TransportInfoActivity.class);
+				transportInfoActivityScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
+				transportInfoActivityScreen.putExtra(Constant.EXTRA_ROUTE_ID, transportArray.getItem(position).getRouteId());
+				transportInfoActivityScreen.putExtra(Constant.EXTRA_STOP_NAME, stopName);
+				transportInfoActivityScreen.putExtra(Constant.EXTRA_TRANSPORT_NAME, transportArray.getItem(position).getTransportName());
+				startActivity(transportInfoActivityScreen);
 			}
 				
     	});

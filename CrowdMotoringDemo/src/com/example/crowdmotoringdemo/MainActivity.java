@@ -76,10 +76,10 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 				String stopId = stopArrayJsonList.get(position).optString("stop_id");
 				String stopName = stopArrayJsonList.get(position).optString("name");
 				
-				Intent stopViewScreen = new Intent(getApplicationContext(), StopInfoActivity.class);
-				stopViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
-				stopViewScreen.putExtra(Constant.EXTRA_STOP_NAME, stopName);
-				startActivity(stopViewScreen);
+				Intent stopInfoActivityScreen = new Intent(getApplicationContext(), StopInfoActivity.class);
+				stopInfoActivityScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
+				stopInfoActivityScreen.putExtra(Constant.EXTRA_STOP_NAME, stopName);
+				startActivity(stopInfoActivityScreen);
 			}
 				
     	});
