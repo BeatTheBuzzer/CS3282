@@ -25,8 +25,11 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	final String crowdednessHistoricalNoReport = "Historically, there is no report on the crowdedness of this bus.";
 	
 	String stopId;
+	String stopName;
+	String transportName;
 	int routeId;
 	
+	TextView transportInfoText;
 	TextView realTimeText;
 	TextView historicalText;
 	Button crowdednessTrueButton;
@@ -37,12 +40,17 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		setContentView(R.layout.transport_info_activity);
 		
 		stopId = getIntent().getStringExtra(Constant.EXTRA_STOP_ID);
+		stopName = getIntent().getStringExtra(Constant.EXTRA_STOP_NAME);
+		transportName = getIntent().getStringExtra(Constant.EXTRA_TRANSPORT_NAME);
 		routeId = getIntent().getIntExtra(Constant.EXTRA_ROUTE_ID, -1);
 		
+		transportInfoText = (TextView) findViewById(R.id.transportInfoText);
 		realTimeText = (TextView) findViewById(R.id.crowdednessRealTimeText);
 		historicalText = (TextView) findViewById(R.id.crowdednessHistoricalText);
 		crowdednessTrueButton = (Button) findViewById(R.id.crowdednessTrueButton);
 		crowdednessFalseButton = (Button) findViewById(R.id.crowdednessFalseButton);
+		
+		transportInfoText.setText(stopName + " - " + transportName);
 		
 		crowdednessTrueButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -85,7 +93,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	public void onDataRetrieved(Object output, String requestStr) {
 		if(requestStr.contains("history")){
 			try {
-				if(output == null){
+				if(output == null || ((String)output).length() <= 0){
 					historicalText.setText(crowdednessHistoricalNoReport);
 					return;
 				}
@@ -106,16 +114,17 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		}
 		else if (requestStr.contains("current")){
 			try {
-				if(output == null){
+				if(output == null || ((String)output).length() <= 0){
 					realTimeText.setText(crowdednessRealTimeNoReport);
 					return;
 				}
 				JSONArray currentDataArr = new JSONArray((String)output);
 				JSONObject currentData = currentDataArr.getJSONObject(0);
+				String sourceStopName = currentData.optString("stop_id");
 				String crowdedData = currentData.optString("crowded");
 				String time = currentData.optString("difference");
-				if(crowdedData.equals("yes")) realTimeText.setText(realTimeReportBuilder(true, time));
-				else realTimeText.setText(realTimeReportBuilder(false, time));
+				if(crowdedData.equals("yes")) realTimeText.setText(realTimeReportBuilder(true, time, sourceStopName));
+				else realTimeText.setText(realTimeReportBuilder(false, time, sourceStopName));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -123,12 +132,13 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		}
 	}
 	
-	protected String realTimeReportBuilder(boolean crowdedness, String time){
+	protected String realTimeReportBuilder(boolean crowdedness, String time, String sourceStopName){
 		String[] timeArr = time.split(":");
+		System.out.println("time: " + time);
 		String timeHour = timeArr[0] + " hours";
 		String timeMinute = timeArr[1] + " minutes";
 		String timeSecond = timeArr[2] + " seconds";
-		return "The bus is reported " + (crowdedness?"crowded":"uncrowded") + " at " + stopId +" " + timeHour + " " + timeMinute + " " + timeSecond + " ago.";
+		return "The bus is reported " + (crowdedness?"crowded":"uncrowded") + " at " + sourceStopName +" " + timeHour + " " + timeMinute + " " + timeSecond + " ago.";
 	}
 	
 	protected String historicalReportBuilder(boolean crowdedness){

@@ -69,7 +69,7 @@ public class TransportElementGetCrowdedness implements ServerCommunicationCallba
 		}
 		else if (requestStr.contains("current")){
 			try {
-				if(output == null) return;
+				if(output == null || ((String)output).length() <= 0) return;
 				JSONArray currentDataArr = new JSONArray((String)output);
 				JSONObject currentData = currentDataArr.getJSONObject(0);
 				String crowdedData = currentData.optString("crowded");

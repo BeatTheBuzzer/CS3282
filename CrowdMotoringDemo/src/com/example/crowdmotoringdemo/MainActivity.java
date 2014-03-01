@@ -74,9 +74,11 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 					long id) {
 				
 				String stopId = stopArrayJsonList.get(position).optString("stop_id");
+				String stopName = stopArrayJsonList.get(position).optString("name");
 				
 				Intent stopViewScreen = new Intent(getApplicationContext(), StopInfoActivity.class);
 				stopViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
+				stopViewScreen.putExtra(Constant.EXTRA_STOP_NAME, stopName);
 				startActivity(stopViewScreen);
 			}
 				
@@ -179,6 +181,8 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 	}
 
 	protected void refreshStopList(){
+		if(stopArrayJsonList == null) return;
+		
 		stopArray.clear();
 		Collections.sort(stopArrayJsonList, new JSONComparatorByDistance());
 		ArrayList<StopListElement> tempList = new ArrayList<StopListElement>();

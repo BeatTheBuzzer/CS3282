@@ -35,6 +35,7 @@ import android.widget.ListView;
 public class StopInfoActivity extends Activity implements ServerCommunicationCallback{
 	
 	String stopId;
+	String stopName;
 	int currentQuery;
 	
 	TransportListAdapter transportArray;
@@ -48,6 +49,7 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 		setContentView(R.layout.stop_info_activity);
 		
 		stopId = getIntent().getStringExtra(Constant.EXTRA_STOP_ID);
+		stopName = getIntent().getStringExtra(Constant.EXTRA_STOP_NAME);
 		
 		transportList = (ListView) findViewById(R.id.list);
 		
@@ -65,6 +67,8 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 				Intent transportViewScreen = new Intent(getApplicationContext(), TransportInfoActivity.class);
 				transportViewScreen.putExtra(Constant.EXTRA_STOP_ID, stopId);
 				transportViewScreen.putExtra(Constant.EXTRA_ROUTE_ID, transportArray.getItem(position).getRouteId());
+				transportViewScreen.putExtra(Constant.EXTRA_STOP_NAME, stopName);
+				transportViewScreen.putExtra(Constant.EXTRA_TRANSPORT_NAME, transportArray.getItem(position).getTransportName());
 				startActivity(transportViewScreen);
 			}
 				

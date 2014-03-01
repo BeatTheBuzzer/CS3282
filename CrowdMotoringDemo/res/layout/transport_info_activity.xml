@@ -13,38 +13,49 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:background="#888888"
+        android:background="#FFFFFF"
         android:orientation="vertical"
         android:padding="0dp" >
+        
+        <TextView
+    	    android:id="@+id/transportInfoText"
+        	android:layout_width="match_parent"
+        	android:layout_height="wrap_content"
+        	android:background="#888888"
+        	android:text=""
+    		android:textAlignment="center"
+    		android:textColor="#FFFFFF"
+            android:textSize="24dp" />
     	
     	<TextView
     	    android:id="@+id/crowdednessRealTimeText"
-        	android:layout_width="wrap_content"
+        	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:text=""
-    		android:textAlignment="center"
-    		android:textColor="#FFFFFF"
-            android:textSize="24dp" />
+    		android:textColor="#333333"
+            android:textSize="16dp" />
     	
     	<TextView
     	    android:id="@+id/crowdednessHistoricalText"
-        	android:layout_width="wrap_content"
+        	android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:text=""
     		android:textAlignment="center"
-    		android:textColor="#FFFFFF"
-            android:textSize="24dp" />
+    		android:textColor="#333333"
+            android:textSize="16dp" />
     	
     	<Button
     	    android:id="@+id/crowdednessTrueButton"
-     		android:layout_height="wrap_content"
+     		android:layout_height="match_parent"
      		android:layout_width="wrap_content"
+     		android:textColor="#333333"
      		android:text="Currently it is crowded"/>
     	
     	<Button
     	    android:id="@+id/crowdednessFalseButton"
-     		android:layout_height="wrap_content"
+     		android:layout_height="match_parent"
      		android:layout_width="wrap_content"
+     		android:textColor="#333333"
      		android:text="Currently it is uncrowded"/>
         
     </LinearLayout>
