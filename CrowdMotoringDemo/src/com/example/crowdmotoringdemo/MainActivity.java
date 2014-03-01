@@ -26,6 +26,7 @@ import com.example.crowdmotoringdemo.servercommunication.ServerCommunicationCall
 import com.example.crowdmotoringdemo.variables.Constant;
 import com.example.crowdmotoringdemo.variables.JSONComparatorByDistance;
 import com.example.crowdmotoringdemo.variables.MiscFunctions;
+import com.example.crowdmotoringdemo.variables.Properties;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -54,6 +55,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 	
 	LocationManager locationManager;
 	LocationListener locationListener;
+	Location currLoc;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -107,29 +109,11 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 		ServerCommunication retriever = new ServerCommunication();
 		retriever.setCallback(this);
         retriever.execute(QueryBuilder.getAllStops());
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        // Define a listener that responds to location updates
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
         	public void onLocationChanged(Location location) {
-        		// Called when a new location is found by the network location provider.
-        		System.out.println("I am called!");
-        		double latitude = location.getLatitude();
-        		double longitude = location.getLongitude();
-        		
-        		for(int i = 0; i < stopArrayJsonList.size(); i++){
-        			JSONObject currBusStop = stopArrayJsonList.get(i);
-        			double busStopLatitude = Double.parseDouble(currBusStop.optString("latitude"));
-        			double busStopLongitude = Double.parseDouble(currBusStop.optString("longitude"));
-        			double distance = MiscFunctions.GPSDistance(latitude, longitude, busStopLatitude, busStopLongitude);
-        			try {
-        				currBusStop.put("distance", distance);
-        			} catch (JSONException e) {
-        				// TODO Auto-generated catch block
-        				e.printStackTrace();
-        			}
-        		}
-        		refreshStopList();
-        		searchTextFilter();
+        		currLoc = location;
+        		updateStopDistance();
         	}
 
         	public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -139,8 +123,8 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
         	public void onProviderDisabled(String provider) {}
         };
 
-        // Register the listener with the Location Manager to receive location updates
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        currLoc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Properties.LOCATION_REFRESH_TIME, Properties.LOCATION_REFRESH_DISTANCE, locationListener);
 	}
 
 	@Override
@@ -161,7 +145,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 				stopArrayJson.optJSONObject(i).put("distance", 0.0);
 			}
 			
-			this.refreshStopList();
+			this.updateStopDistance();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -169,6 +153,29 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 		
 		
 		
+	}
+	
+	protected void updateStopDistance(){
+		if(stopArrayJsonList == null) return;
+		
+		double latitude = currLoc.getLatitude();
+		double longitude = currLoc.getLongitude();
+		
+		for(int i = 0; i < stopArrayJsonList.size(); i++){
+			JSONObject currBusStop = stopArrayJsonList.get(i);
+			double busStopLatitude = Double.parseDouble(currBusStop.optString("latitude"));
+			double busStopLongitude = Double.parseDouble(currBusStop.optString("longitude"));
+			double distance = MiscFunctions.GPSDistance(latitude, longitude, busStopLatitude, busStopLongitude);
+			try {
+				currBusStop.put("distance", distance);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		this.refreshStopList();
+		this.searchTextFilter();
 	}
 
 	protected void refreshStopList(){
