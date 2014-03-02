@@ -15,9 +15,11 @@ import android.os.Bundle;
 import android.text.format.Time;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class TransportInfoActivity extends Activity implements ServerCommunicationCallback{
 	
@@ -29,9 +31,11 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	String transportName;
 	int routeId;
 	
+	LinearLayout postCrowdednessDisplayLinearLayout;
 	TextView transportInfoText;
 	TextView realTimeText;
 	TextView historicalText;
+	TextView postCrowdednessArrowText;
 	Button crowdednessTrueButton;
 	Button crowdednessFalseButton;
 	
@@ -44,13 +48,33 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		transportName = getIntent().getStringExtra(Constant.EXTRA_TRANSPORT_NAME);
 		routeId = getIntent().getIntExtra(Constant.EXTRA_ROUTE_ID, -1);
 		
+		postCrowdednessDisplayLinearLayout = (LinearLayout) findViewById(R.id.postCrowdednessDisplayLinearLayout);
 		transportInfoText = (TextView) findViewById(R.id.transportInfoText);
 		realTimeText = (TextView) findViewById(R.id.crowdednessRealTimeText);
 		historicalText = (TextView) findViewById(R.id.crowdednessHistoricalText);
+		postCrowdednessArrowText = (TextView) findViewById(R.id.postCrowdednessArrowText);
 		crowdednessTrueButton = (Button) findViewById(R.id.crowdednessTrueButton);
 		crowdednessFalseButton = (Button) findViewById(R.id.crowdednessFalseButton);
 		
 		transportInfoText.setText(stopName + " - " + transportName);
+		
+		postCrowdednessDisplayLinearLayout.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String upArrow = "\u25B2";
+				String downArrow = "\u25BC";
+				if(postCrowdednessArrowText.getText().equals(upArrow)){
+					postCrowdednessArrowText.setText(downArrow);
+					crowdednessTrueButton.setVisibility(View.GONE);
+					crowdednessFalseButton.setVisibility(View.GONE);
+				}
+				else{
+					postCrowdednessArrowText.setText(upArrow);
+					crowdednessTrueButton.setVisibility(View.VISIBLE);
+					crowdednessFalseButton.setVisibility(View.VISIBLE);
+				}
+			}
+		});
 		
 		crowdednessTrueButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -58,8 +82,8 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				// TODO Auto-generated method stub
 				ServerCommunication poster = new ServerCommunication();
 		        poster.execute(QueryBuilder.post(routeId, stopId, true));
-				crowdednessTrueButton.setVisibility(View.GONE);
-				crowdednessFalseButton.setVisibility(View.GONE);
+		        Toast confirmation = Toast.makeText(getApplicationContext(), "Thanks for letting us know!", 5000);
+		        confirmation.show();
 			}
 		});
 		
@@ -69,8 +93,8 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				// TODO Auto-generated method stub
 				ServerCommunication poster = new ServerCommunication();
 		        poster.execute(QueryBuilder.post(routeId, stopId, false));
-				crowdednessTrueButton.setVisibility(View.GONE);
-				crowdednessFalseButton.setVisibility(View.GONE);
+		        Toast confirmation = Toast.makeText(getApplicationContext(), "Thanks for letting us know!", 5000);
+		        confirmation.show();
 			}
 		});
 	}
@@ -120,7 +144,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				}
 				JSONArray currentDataArr = new JSONArray((String)output);
 				JSONObject currentData = currentDataArr.getJSONObject(0);
-				String sourceStopName = currentData.optString("stop_id");
+				String sourceStopName = currentData.optString("stop_name");
 				String crowdedData = currentData.optString("crowded");
 				String time = currentData.optString("difference");
 				if(crowdedData.equals("yes")) realTimeText.setText(realTimeReportBuilder(true, time, sourceStopName));
