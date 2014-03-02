@@ -14,9 +14,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,11 +33,14 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	String transportName;
 	int routeId;
 	
+	ArrayAdapter<String> spinnerChoice;
+	
 	LinearLayout postCrowdednessDisplayLinearLayout;
 	TextView transportInfoText;
 	TextView realTimeText;
 	TextView historicalText;
 	TextView postCrowdednessArrowText;
+	Spinner postCrowdednessInputSpinner;
 	Button crowdednessTrueButton;
 	Button crowdednessFalseButton;
 	
@@ -53,8 +58,15 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		realTimeText = (TextView) findViewById(R.id.crowdednessRealTimeText);
 		historicalText = (TextView) findViewById(R.id.crowdednessHistoricalText);
 		postCrowdednessArrowText = (TextView) findViewById(R.id.postCrowdednessArrowText);
+		postCrowdednessInputSpinner = (Spinner) findViewById(R.id.postCrowdednessInputSpinner);
 		crowdednessTrueButton = (Button) findViewById(R.id.crowdednessTrueButton);
 		crowdednessFalseButton = (Button) findViewById(R.id.crowdednessFalseButton);
+		
+		spinnerChoice = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item);
+		spinnerChoice.add("crowded");
+		spinnerChoice.add("uncrowded");
+		spinnerChoice.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		postCrowdednessInputSpinner.setAdapter(spinnerChoice);
 		
 		transportInfoText.setText(stopName + " - " + transportName);
 		
