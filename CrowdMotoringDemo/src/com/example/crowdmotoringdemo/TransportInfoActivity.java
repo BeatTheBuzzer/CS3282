@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -34,13 +35,16 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	int routeId;
 	
 	ArrayAdapter<String> spinnerChoice;
+	String postMessage = "crowded";
 	
 	LinearLayout postCrowdednessDisplayLinearLayout;
+	LinearLayout postCrowdednessInputLinearLayout;
 	TextView transportInfoText;
 	TextView realTimeText;
 	TextView historicalText;
 	TextView postCrowdednessArrowText;
 	Spinner postCrowdednessInputSpinner;
+	Button crowdednessSubmitButton;
 	Button crowdednessTrueButton;
 	Button crowdednessFalseButton;
 	
@@ -54,11 +58,13 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		routeId = getIntent().getIntExtra(Constant.EXTRA_ROUTE_ID, -1);
 		
 		postCrowdednessDisplayLinearLayout = (LinearLayout) findViewById(R.id.postCrowdednessDisplayLinearLayout);
+		postCrowdednessInputLinearLayout = (LinearLayout) findViewById(R.id.postCrowdednessInputLinearLayout);
 		transportInfoText = (TextView) findViewById(R.id.transportInfoText);
 		realTimeText = (TextView) findViewById(R.id.crowdednessRealTimeText);
 		historicalText = (TextView) findViewById(R.id.crowdednessHistoricalText);
 		postCrowdednessArrowText = (TextView) findViewById(R.id.postCrowdednessArrowText);
 		postCrowdednessInputSpinner = (Spinner) findViewById(R.id.postCrowdednessInputSpinner);
+		crowdednessSubmitButton = (Button) findViewById(R.id.crowdednessSubmitButton);
 		crowdednessTrueButton = (Button) findViewById(R.id.crowdednessTrueButton);
 		crowdednessFalseButton = (Button) findViewById(R.id.crowdednessFalseButton);
 		
@@ -77,14 +83,43 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				String downArrow = "\u25BC";
 				if(postCrowdednessArrowText.getText().equals(upArrow)){
 					postCrowdednessArrowText.setText(downArrow);
-					crowdednessTrueButton.setVisibility(View.GONE);
-					crowdednessFalseButton.setVisibility(View.GONE);
+					postCrowdednessInputLinearLayout.setVisibility(View.GONE);
+					crowdednessSubmitButton.setVisibility(View.GONE);
+//					crowdednessTrueButton.setVisibility(View.GONE);
+//					crowdednessFalseButton.setVisibility(View.GONE);
 				}
 				else{
 					postCrowdednessArrowText.setText(upArrow);
-					crowdednessTrueButton.setVisibility(View.VISIBLE);
-					crowdednessFalseButton.setVisibility(View.VISIBLE);
+					postCrowdednessInputLinearLayout.setVisibility(View.VISIBLE);
+					crowdednessSubmitButton.setVisibility(View.VISIBLE);
+//					crowdednessTrueButton.setVisibility(View.VISIBLE);
+//					crowdednessFalseButton.setVisibility(View.VISIBLE);
 				}
+			}
+		});
+		
+		postCrowdednessInputSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) 
+            {
+                postMessage = parent.getItemAtPosition(pos).toString();
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) 
+            {
+
+            }
+        });
+
+		
+		crowdednessSubmitButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				ServerCommunication poster = new ServerCommunication();
+				if(postMessage.equals("crowded")) poster.execute(QueryBuilder.post(routeId, stopId, true));
+				else poster.execute(QueryBuilder.post(routeId, stopId, false));
+		        Toast confirmation = Toast.makeText(getApplicationContext(), "Thanks for letting us know!", 5000);
+		        confirmation.show();
 			}
 		});
 		
