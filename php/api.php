@@ -173,8 +173,8 @@ class API extends REST {
 			}
 		}
 
-		//	Get the info of the previous stop
-		$query = "SELECT stop_id, crowded, SUBTIME(CURTIME(), time) AS difference from info where stop_id = (SELECT stop_id FROM $table WHERE idx = (SELECT (idx-1) FROM bus95 WHERE stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() ORDER BY difference LIMIT 1";
+		//	Get the info of the previous stop		
+		$query = "SELECT info.stop_id,bus_stop.name, crowded, SUBTIME(CURTIME(), time) AS difference from info, bus_stop where info.stop_id = bus_stop.stop_id AND info.stop_id = (SELECT stop_id FROM $table WHERE idx = (SELECT (idx-1) FROM bus95 WHERE stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() ORDER BY difference LIMIT 1";
 		$sql=mysql_query($query,$this->db);
 		if($sql){
 			if(mysql_num_rows($sql) > 0){
