@@ -68,10 +68,9 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		crowdednessTrueButton = (Button) findViewById(R.id.crowdednessTrueButton);
 		crowdednessFalseButton = (Button) findViewById(R.id.crowdednessFalseButton);
 		
-		spinnerChoice = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item);
+		spinnerChoice = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_spinner_item_custom);
 		spinnerChoice.add("crowded");
 		spinnerChoice.add("uncrowded");
-		spinnerChoice.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		postCrowdednessInputSpinner.setAdapter(spinnerChoice);
 		
 		transportInfoText.setText(stopName + " - " + transportName);
@@ -172,7 +171,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				JSONObject historicalData = historicalDataArr.getJSONObject(0);
 				int yes = historicalData.optInt("yes");
 				int no = historicalData.optInt("no");
-				if(yes == 0 && no == 0){
+				if(yes <= 0 && no <= 0){
 					historicalText.setText(crowdednessHistoricalNoReport);
 					return;
 				}
