@@ -174,7 +174,7 @@ class API extends REST {
 		}
 
 		//	Get the info of the previous stop		
-		$query = "SELECT info.stop_id,bus_stop.name, crowded, SUBTIME(CURTIME(), time) AS difference from info, bus_stop where info.stop_id = bus_stop.stop_id AND info.stop_id = (SELECT stop_id FROM $table WHERE idx = (SELECT (idx-1) FROM bus95 WHERE stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() ORDER BY difference LIMIT 1";
+		$query = "SELECT info.stop_id,bus_stop.name, crowded, SUBTIME(CURTIME(), time) AS difference from info, bus_stop where info.stop_id = bus_stop.stop_id AND info.stop_id = (SELECT stop_id FROM $table WHERE idx = (SELECT (idx-1) FROM $table WHERE stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() ORDER BY difference LIMIT 1";
 		$sql=mysql_query($query,$this->db);
 		if($sql){
 			if(mysql_num_rows($sql) > 0){
@@ -212,6 +212,29 @@ class API extends REST {
 		}
 	}
 
+	private function historicaldata(){
+		$route_id = mysql_real_escape_string($this -> _request['route_id']);
+		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
+		$query="";
+		for ($i=1;$i<=7;$i++){
+			$query ="select (select subdate(curdate(),INTERVAL $i DAY))as date, (select count(1) from info where date = subdate(curdate(),INTERVAL $i DAY) and crowded='yes') as yes, (select count(1) from info where date = subdate(curdate(),INTERVAL $i DAY) and crowded='no') as no";
+			$sql=mysql_query($query,$this->db);
+			if($sql){
+				if(mysql_num_rows($sql) > 0){
+
+					while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+						$result[] = $rlt;
+					}
+					// If success everythig is good send header as "OK" and return list of users in JSON format				
+					
+				}
+				
+			}
+			
+		}	
+		$this->response($this->json($result), 200);
+		
+	}
 	/*
 	 *	Return the bus name according to the stop id
 	 */
