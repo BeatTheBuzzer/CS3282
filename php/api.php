@@ -214,7 +214,7 @@ class API extends REST {
 	/*
 	 *	Return the historical data of the crowdedness info
 	 */	
-	private function historicalData(){
+	private function history(){
 		$route_id = mysql_real_escape_string($this -> _request['route_id']);
 		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
 		$left = mysql_real_escape_string($this -> _request['left']);
