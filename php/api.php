@@ -207,8 +207,10 @@ class API extends REST {
 				}
 			}// end of query
 		}// end of for
-
-		$this->response($this->json($result), 200);
+		if(count($result) > 0)
+			$this->response($this->json($result), 200);
+		else
+			$this->response('',204);
 	}
 
 	/*
@@ -220,8 +222,11 @@ class API extends REST {
 		$left = mysql_real_escape_string($this -> _request['left']);
 		$right = mysql_real_escape_string($this -> _request['right']);
 		$query="";
-
-		for ($i=1;$i<=7;$i++){
+		$duration = mysql_real_escape_string($this -> _request['duration']);
+		if($duration > 28){
+			$duration = 28;
+		}
+		for ($i=1;$i<=$duration;$i++){
 			$query ="SELECT (SELECT SUBDATE(CURDATE(),INTERVAL $i DAY)) AS Date, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded ='yes' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(CURTIME(),'$left')) AS YES, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded='no' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(curtime(),'$left')) AS NO";
 
 			$sql=mysql_query($query,$this->db);
@@ -233,7 +238,10 @@ class API extends REST {
 				}			
 			}// end of query		
 		}// end of for
-		$this->response($this->json($result), 200);	
+		if(count($result) > 0)
+			$this->response($this->json($result), 200);
+		else
+			$this->response('',204);
 	}
 
 }
