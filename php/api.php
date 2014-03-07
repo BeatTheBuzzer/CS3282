@@ -215,9 +215,11 @@ class API extends REST {
 	private function historicaldata(){
 		$route_id = mysql_real_escape_string($this -> _request['route_id']);
 		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
+		$left = mysql_real_escape_string($this -> _request['left']);
+		$right = mysql_real_escape_string($this -> _request['right']);
 		$query="";
 		for ($i=1;$i<=7;$i++){
-			$query ="select (select subdate(curdate(),INTERVAL $i DAY))as date, (select count(1) from info where date = subdate(curdate(),INTERVAL $i DAY) and crowded='yes') as yes, (select count(1) from info where date = subdate(curdate(),INTERVAL $i DAY) and crowded='no') as no";
+			$query ="SELECT (SELECT SUBDATE(CURDATE(),INTERVAL $i DAY)) AS Date, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded ='yes' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(CURTIME(),'$left')) AS YES, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded='no' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(curtime(),'$left')) AS NO";
 			$sql=mysql_query($query,$this->db);
 			if($sql){
 				if(mysql_num_rows($sql) > 0){
