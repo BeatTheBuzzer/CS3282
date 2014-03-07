@@ -55,7 +55,7 @@ class API extends REST {
 	 *	Used for debugging purpose
 	 */
 	private function users(){	
-		
+
 		$sql = mysql_query("SELECT user_id, name FROM user", $this->db);
 		if(mysql_num_rows($sql) > 0){
 			$result = array();
@@ -154,90 +154,6 @@ class API extends REST {
 	}
 
 	/*
-	 *	Return crowdedness info from the data posted in the current day.
-	 */
-	private function current(){
-		$route_id = mysql_real_escape_string($this -> _request['route_id']);
-		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
-		$table = 'bus95';
-		$result = array();
-
-		// Get the mapping table from bus to its route
-		$query = "SELECT listofstops FROM route WHERE route_id= $route_id";
-		$sql=mysql_query($query,$this->db);
-		if(mysql_num_rows($sql) > 0){
-
-			while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
-
-				$table = $rlt['listofstops'];
-			}
-		}
-
-		//	Get the info of the previous stop		
-		$query = "SELECT info.stop_id,bus_stop.name, crowded, SUBTIME(CURTIME(), time) AS difference from info, bus_stop where info.stop_id = bus_stop.stop_id AND info.stop_id = (SELECT stop_id FROM $table WHERE idx = (SELECT (idx-1) FROM $table WHERE stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() ORDER BY difference LIMIT 1";
-		$sql=mysql_query($query,$this->db);
-		if($sql){
-			if(mysql_num_rows($sql) > 0){
-
-				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
-					$result[] = $rlt;
-				}
-				// If success everythig is good send header as "OK" and return list of users in JSON format				
-				$this->response($this->json($result), 200);
-			}
-			$this->response('',204);
-		}
-
-	}
-
-	/*
-	 *	Return the historical data of the crowdedness info
-	 */
-	private function history(){
-		$route_id = mysql_real_escape_string($this -> _request['route_id']);
-		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
-
-		$query ="SELECT (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date < curdate() AND time < addtime ( curtime(), '00:10:00') AND crowded ='yes' AND time > subtime(curtime(),'00:05:00')) AS yes, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date < curdate() AND time < addtime ( curtime(), '00:10:00') AND time > subtime(curtime(),'00:05:00') AND crowded = 'no') AS no";
-		$sql=mysql_query($query,$this->db);
-		if($sql){
-			if(mysql_num_rows($sql) > 0){
-
-				while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
-					$result[] = $rlt;
-				}
-				// If success everythig is good send header as "OK" and return list of users in JSON format				
-				$this->response($this->json($result), 200);
-			}
-			$this->response('',204);
-		}
-	}
-
-	private function historicaldata(){
-		$route_id = mysql_real_escape_string($this -> _request['route_id']);
-		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
-		$left = mysql_real_escape_string($this -> _request['left']);
-		$right = mysql_real_escape_string($this -> _request['right']);
-		$query="";
-		for ($i=1;$i<=7;$i++){
-			$query ="SELECT (SELECT SUBDATE(CURDATE(),INTERVAL $i DAY)) AS Date, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded ='yes' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(CURTIME(),'$left')) AS YES, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded='no' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(curtime(),'$left')) AS NO";
-			$sql=mysql_query($query,$this->db);
-			if($sql){
-				if(mysql_num_rows($sql) > 0){
-
-					while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
-						$result[] = $rlt;
-					}
-					// If success everythig is good send header as "OK" and return list of users in JSON format				
-					
-				}
-				
-			}
-			
-		}	
-		$this->response($this->json($result), 200);
-		
-	}
-	/*
 	 *	Return the bus name according to the stop id
 	 */
 
@@ -256,6 +172,70 @@ class API extends REST {
 			$this->response('',204);
 		}
 	}
+
+	/*
+	 *	Return crowdedness info from the data posted in the current day.
+	 */
+	private function current(){
+		$route_id = mysql_real_escape_string($this -> _request['route_id']);
+		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
+		$table = "";
+		$result = array();
+
+		// Get the mapping table from bus to its route
+		$query = "SELECT listofstops FROM route WHERE route_id= $route_id";
+		$sql=mysql_query($query,$this->db);
+		if(mysql_num_rows($sql) > 0){
+
+			while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+
+				$table = $rlt['listofstops'];
+			}
+		}
+
+		//	Get the info of the previous stop
+		for($i = 1;$i <= 20;$i++){
+			$query = "SELECT $i AS stop_diff, info.stop_id,bus_stop.name, crowded, SUBTIME(CURTIME(), time) AS difference from info, bus_stop where info.stop_id = bus_stop.stop_id AND info.stop_id = (SELECT stop_id FROM $table WHERE idx = (SELECT (idx-$i) FROM $table WHERE stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() ORDER BY difference LIMIT 1";
+			$sql=mysql_query($query,$this->db);
+			if($sql){
+				if(mysql_num_rows($sql) > 0){
+
+					while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+						$result[] = $rlt;
+					}// end of while
+					break;
+				}
+			}// end of query
+		}// end of for
+
+		$this->response($this->json($result), 200);
+	}
+
+	/*
+	 *	Return the historical data of the crowdedness info
+	 */	
+	private function historicalData(){
+		$route_id = mysql_real_escape_string($this -> _request['route_id']);
+		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
+		$left = mysql_real_escape_string($this -> _request['left']);
+		$right = mysql_real_escape_string($this -> _request['right']);
+		$query="";
+
+		for ($i=1;$i<=7;$i++){
+			$query ="SELECT (SELECT SUBDATE(CURDATE(),INTERVAL $i DAY)) AS Date, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded ='yes' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(CURTIME(),'$left')) AS YES, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded='no' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(curtime(),'$left')) AS NO";
+
+			$sql=mysql_query($query,$this->db);
+			if($sql){
+				if(mysql_num_rows($sql) > 0){
+					while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+						$result[] = $rlt;
+					}// end of while
+				}			
+			}// end of query		
+		}// end of for
+		$this->response($this->json($result), 200);	
+	}
+
 }
 // Initiiate Library
 
