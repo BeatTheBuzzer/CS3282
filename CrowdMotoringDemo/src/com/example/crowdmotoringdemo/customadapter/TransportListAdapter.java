@@ -37,9 +37,9 @@ public class TransportListAdapter extends ArrayAdapter<TransportListElement>{
 		        LayoutInflater vi;
 		        vi = LayoutInflater.from(getContext());
 		        v = vi.inflate(R.layout.transport_list_element, null);
-		        
-		        if(position%2 == 0) v.setBackgroundColor(Color.parseColor(Constant.COLOR_WHITE));
-			    else v.setBackgroundColor(Color.parseColor(Constant.COLOR_DARKER_WHITE));
+		        v.setBackgroundColor(Color.parseColor(Constant.COLOR_WHITE));
+//		        if(position%2 == 0) v.setBackgroundColor(Color.parseColor(Constant.COLOR_WHITE));
+//			    else v.setBackgroundColor(Color.parseColor(Constant.COLOR_DARKER_WHITE));
 		    }
 
 		    final TransportListElement p = getItem(position);

@@ -160,19 +160,39 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 	protected void updateStopDistance(){
 		if(stopArrayJsonList == null) return;
 		
-		double latitude = currLoc.getLatitude();
-		double longitude = currLoc.getLongitude();
+		double latitude = 0;
+		double longitude= 0;
+		boolean locationValid;
+		
+		try{
+			latitude = currLoc.getLatitude();
+			longitude = currLoc.getLongitude();
+			locationValid = true;
+		}catch(Exception e){
+			locationValid = false;
+		}
 		
 		for(int i = 0; i < stopArrayJsonList.size(); i++){
 			JSONObject currBusStop = stopArrayJsonList.get(i);
-			double busStopLatitude = Double.parseDouble(currBusStop.optString("latitude"));
-			double busStopLongitude = Double.parseDouble(currBusStop.optString("longitude"));
-			double distance = MiscFunctions.GPSDistance(latitude, longitude, busStopLatitude, busStopLongitude);
-			try {
-				currBusStop.put("distance", distance);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			
+			if(locationValid){	
+				double busStopLatitude = Double.parseDouble(currBusStop.optString("latitude"));
+				double busStopLongitude = Double.parseDouble(currBusStop.optString("longitude"));
+				double distance = MiscFunctions.GPSDistance(latitude, longitude, busStopLatitude, busStopLongitude);
+				try {
+					currBusStop.put("distance", distance);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else{
+				try {
+					currBusStop.put("distance", 0);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		

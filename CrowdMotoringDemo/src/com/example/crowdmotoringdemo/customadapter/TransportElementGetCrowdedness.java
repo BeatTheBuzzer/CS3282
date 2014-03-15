@@ -8,6 +8,7 @@ import com.example.crowdmotoringdemo.servercommunication.QueryBuilder;
 import com.example.crowdmotoringdemo.servercommunication.ServerCommunication;
 import com.example.crowdmotoringdemo.servercommunication.ServerCommunicationCallback;
 import com.example.crowdmotoringdemo.variables.Constant;
+import com.example.crowdmotoringdemo.variables.MiscFunctions;
 
 import android.widget.ListView;
 
@@ -38,7 +39,7 @@ public class TransportElementGetCrowdedness implements ServerCommunicationCallba
         
         ServerCommunication retrieverCurrent = new ServerCommunication();
 		retrieverCurrent.setCallback(this);
-        retrieverCurrent.execute(QueryBuilder.getHistoricalCrowdedness(stopId, e.getRouteId()));
+        retrieverCurrent.execute(QueryBuilder.getHistoricalCrowdedness(stopId, e.getRouteId(), MiscFunctions.currentTimeStringBuilder(-10), MiscFunctions.currentTimeStringBuilder(+10), 14));
 	}
 
 	@Override

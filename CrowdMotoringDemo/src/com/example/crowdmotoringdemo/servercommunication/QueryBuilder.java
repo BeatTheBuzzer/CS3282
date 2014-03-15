@@ -19,7 +19,7 @@ public class QueryBuilder {
 		return "rquest=current&route_id=" + routeId + "&stop_id=" + stopId;
 	}
 	
-	public static String getHistoricalCrowdedness(String stopId, int routeId){
-		return "rquest=history&route_id=" + routeId + "&stop_id=" + stopId;
+	public static String getHistoricalCrowdedness(String stopId, int routeId, String startTime, String endTime, int durationDay){
+		return "rquest=history&route_id=" + routeId + "&stop_id=" + stopId + "&left=" + startTime + "&right=" + endTime + "&duration=" + durationDay;
 	}
 }

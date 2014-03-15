@@ -1,8 +1,20 @@
 package com.example.crowdmotoringdemo.variables;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import org.json.JSONObject;
 
 public class MiscFunctions {
+	// Outputs current time in server-specific format (hh:mm:ss), with minutes added by minOffset
+	public static String currentTimeStringBuilder(int minOffset){
+		Calendar currentTime = Calendar.getInstance(TimeZone.getTimeZone("SGT"));
+		currentTime.add(Calendar.MILLISECOND, Constant.TIME_OFFSET);
+		currentTime.add(Calendar.MINUTE, minOffset);
+		System.out.println(currentTime.get(Calendar.HOUR_OF_DAY)+":"+currentTime.get(Calendar.MINUTE)+":"+currentTime.get(Calendar.SECOND));
+		return currentTime.get(Calendar.HOUR_OF_DAY)+":"+currentTime.get(Calendar.MINUTE)+":"+currentTime.get(Calendar.SECOND);
+	}
+	
 	public static double GPSDistance(double lat1, double lon1, double lat2, double lon2) {
 		double theta = lon1 - lon2;
 	    double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
