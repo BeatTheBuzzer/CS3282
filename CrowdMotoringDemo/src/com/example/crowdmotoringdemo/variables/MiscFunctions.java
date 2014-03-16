@@ -9,10 +9,11 @@ public class MiscFunctions {
 	// Outputs current time in server-specific format (hh:mm:ss), with minutes added by minOffset
 	public static String currentTimeStringBuilder(int minOffset){
 		Calendar currentTime = Calendar.getInstance(TimeZone.getTimeZone("SGT"));
+		currentTime.set(Calendar.SECOND, 0);
 		currentTime.add(Calendar.MILLISECOND, Constant.TIME_OFFSET);
 		currentTime.add(Calendar.MINUTE, minOffset);
 		System.out.println(currentTime.get(Calendar.HOUR_OF_DAY)+":"+currentTime.get(Calendar.MINUTE)+":"+currentTime.get(Calendar.SECOND));
-		return currentTime.get(Calendar.HOUR_OF_DAY)+":"+currentTime.get(Calendar.MINUTE)+":"+currentTime.get(Calendar.SECOND);
+		return currentTime.get(Calendar.HOUR_OF_DAY)+":"+(currentTime.get(Calendar.MINUTE)<10?"0":"")+currentTime.get(Calendar.MINUTE)+":00";
 	}
 	
 	public static double GPSDistance(double lat1, double lon1, double lat2, double lon2) {

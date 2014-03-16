@@ -9,6 +9,7 @@ import com.example.crowdmotoringdemo.servercommunication.ServerCommunication;
 import com.example.crowdmotoringdemo.servercommunication.ServerCommunicationCallback;
 import com.example.crowdmotoringdemo.variables.Constant;
 import com.example.crowdmotoringdemo.variables.MiscFunctions;
+import com.example.crowdmotoringdemo.variables.Properties;
 
 import android.widget.ListView;
 
@@ -33,13 +34,18 @@ public class TransportElementGetCrowdedness implements ServerCommunicationCallba
 	}
 	
 	protected void retrieveCrowdednessInfo(){
-		ServerCommunication retrieverHistorical = new ServerCommunication();
-		retrieverHistorical.setCallback(this);
-        retrieverHistorical.execute(QueryBuilder.getCurrentCrowdedness(stopId, e.getRouteId()));
-        
-        ServerCommunication retrieverCurrent = new ServerCommunication();
+		ServerCommunication retrieverCurrent = new ServerCommunication();
 		retrieverCurrent.setCallback(this);
-        retrieverCurrent.execute(QueryBuilder.getHistoricalCrowdedness(stopId, e.getRouteId(), MiscFunctions.currentTimeStringBuilder(-10), MiscFunctions.currentTimeStringBuilder(+10), 14));
+        retrieverCurrent.execute(QueryBuilder.getCurrentCrowdedness(stopId, e.getRouteId()));
+        
+        ServerCommunication retrieverHistorical = new ServerCommunication();
+		retrieverHistorical.setCallback(this);
+		retrieverHistorical.execute(QueryBuilder.getHistoricalCrowdedness(this.stopId,
+				e.getRouteId(),
+				MiscFunctions.currentTimeStringBuilder(-10),
+				MiscFunctions.currentTimeStringBuilder(+10),
+				Properties.HISTORICAL_DATA_DEFAULT_AMOUNT
+				));
 	}
 
 	@Override
