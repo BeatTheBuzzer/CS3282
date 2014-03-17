@@ -243,6 +243,19 @@ class API extends REST {
 		else
 			$this->response('',204);
 	}
+	// for logging event and user evaluation
+	private function log(){
+		$event_id = mysql_real_escape_string($this -> _request['event_id']);
+		$time = mysql_real_escape_string($this -> _request['time']);
+		$string = mysql_real_escape_string($this -> _request['string']);
+		$query = "INSERT INTO event_log(event_id,time,date,string_id) VALUES($event_id,'$time',CURDATE(),'$string')";
+		$sql=mysql_query($query,$this->db);
+		if($sql){
+			$this->response('',200);
+		}
+
+		$this->response('',204);
+	}
 
 }
 // Initiiate Library
