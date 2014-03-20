@@ -1,9 +1,18 @@
 package com.example.crowdmotoringdemo.variables;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
 import org.json.JSONObject;
+
+import android.content.Context;
+
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient.Info;
+import com.google.android.gms.auth.GooglePlayServicesAvailabilityException;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
 public class MiscFunctions {
 	// Outputs current time in server-specific format (hh:mm:ss), with minutes added by minOffset
@@ -24,6 +33,21 @@ public class MiscFunctions {
 	    dist = dist * 60 * 1.1515;
 	    dist = dist * 1.60934 * 1000; // Distance calculated above is in miles; convert to metres
 	    return (dist);
+	}
+	
+	public static String getAdvertisingId(Context mContext){ // Unique ID of each Android phone
+		Info adInfo = null;
+		
+		String response = "lalala";
+		
+		try{
+			adInfo = AdvertisingIdClient.getAdvertisingIdInfo(mContext);
+		} catch (Exception e) {
+			return e.toString();
+		}
+		
+//		return adInfo.getId();
+		return response;
 	}
 
 	private static double deg2rad(double deg) {

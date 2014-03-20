@@ -25,6 +25,7 @@ import com.example.crowdmotoringdemo.variables.MiscFunctions;
 import com.example.crowdmotoringdemo.variables.Properties;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -66,6 +67,8 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	Button crowdednessSubmitButton;
 	Button crowdednessTrueButton;
 	Button crowdednessFalseButton;
+	
+	Context mContext = this;
 	
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -177,6 +180,16 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		        confirmation.show();
 			}
 		});
+		
+		new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				System.out.println("aaaa " + MiscFunctions.getAdvertisingId(mContext));
+			}
+			
+		}.run();
 	}
 	
 	protected void onStart(){
@@ -239,7 +252,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				}
 				JSONArray currentDataArr = new JSONArray((String)output);
 				JSONObject currentData = currentDataArr.getJSONObject(0);
-				String sourceStopName = currentData.optString("stop_name");
+				String sourceStopName = currentData.optString("name");
 				String crowdedData = currentData.optString("crowded");
 				String time = currentData.optString("difference");
 				if(crowdedData.equals("yes")) realTimeText.setText(realTimeReportBuilder(true, time, sourceStopName));
@@ -254,10 +267,10 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	protected String realTimeReportBuilder(boolean crowdedness, String time, String sourceStopName){
 		String[] timeArr = time.split(":");
 		System.out.println("time: " + time);
-		String timeHour = timeArr[0] + " hours";
-		String timeMinute = timeArr[1] + " minutes";
-		String timeSecond = timeArr[2] + " seconds";
-		return "The bus is reported " + (crowdedness?"crowded":"uncrowded") + " at " + sourceStopName +" " + timeHour + " " + timeMinute + " " + timeSecond + " ago.";
+		String timeHour = Integer.parseInt(timeArr[0]) == 0? "":" " + Integer.parseInt(timeArr[0]) + " hours";
+		String timeMinute = Integer.parseInt(timeArr[1]) == 0? "":" " + Integer.parseInt(timeArr[1]) + " minutes";
+		String timeSecond = Integer.parseInt(timeArr[2]) == 0? "":" " + Integer.parseInt(timeArr[2]) + " seconds";
+		return "The bus is reported " + (crowdedness?"crowded":"uncrowded") + " at " + sourceStopName + timeHour + timeMinute + timeSecond + " ago.";
 	}
 	
 	protected String historicalReportBuilder(boolean crowdedness){
@@ -330,7 +343,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 			// Create XYSeriesRenderer to customize the line
 
 			XYSeriesRenderer lineRenderer = new XYSeriesRenderer();
-			lineRenderer.setColor(Color.parseColor("#333333"));
+			lineRenderer.setColor(Color.RED);
 			lineRenderer.setPointStyle(PointStyle.DIAMOND);
 			lineRenderer.setDisplayChartValues(true);
 			lineRenderer.setLineWidth(2);
@@ -388,16 +401,19 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	    	@Override
 	    	public void onClick(View arg0) {
 	    		 // TODO Auto-generated method stub
+	    		try{
+	    			SeriesSelection selectedPoint = lineGraph.getCurrentSeriesAndPoint();
 	    
-	    		SeriesSelection selectedPoint = lineGraph.getCurrentSeriesAndPoint();
-	    
-	    		if(selectedPoint!=null)
-	    		{
-	    			String time = xAxisLabelsFinal[(int)selectedPoint.getXValue()];
+	    			if(selectedPoint!=null)
+	    			{
+	    				String time = xAxisLabelsFinal[(int)selectedPoint.getXValue()];
 	     
-	    			double amount=(double)selectedPoint.getValue();
-	     
-	    			Toast.makeText(getBaseContext(), "Crowdedness at " + time + ": " + amount + "%", 5000).show();
+	    				double amount=(double)selectedPoint.getValue();
+	    				
+	    				Toast.makeText(getBaseContext(), "Crowdedness at " + time + ": " + amount + "%", 5000).show();
+	    			}
+	    		} catch(Exception e){
+	    			
 	    		}
 	    	}
 	     	});

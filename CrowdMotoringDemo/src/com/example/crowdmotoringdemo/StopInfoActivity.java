@@ -106,6 +106,7 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 	public void onDataRetrieved(Object output, String requestStr) {
 		// TODO Auto-generated method stub
 		System.out.println("Success obtaining json " + output);
+		if(output == null) return;
 		
 		try {
 			transportArrayJson = new JSONArray((String)output);

@@ -72,7 +72,6 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
-				
 				String stopId = stopArrayJsonList.get(position).optString("stop_id");
 				String stopName = stopArrayJsonList.get(position).optString("name");
 				
@@ -105,7 +104,6 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 	@Override
 	protected void onStart(){
 		super.onStart();
-		
 		System.out.println("onCreate finishing");
 		System.out.println(QueryBuilder.getAllStops());
 		ServerCommunication retriever = new ServerCommunication();

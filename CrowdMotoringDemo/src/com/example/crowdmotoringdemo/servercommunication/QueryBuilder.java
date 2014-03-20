@@ -1,6 +1,7 @@
 package com.example.crowdmotoringdemo.servercommunication;
 
 import com.example.crowdmotoringdemo.variables.Constant;
+import com.example.crowdmotoringdemo.variables.MiscFunctions;
 
 public class QueryBuilder {
 	public static String getAllStops(){
@@ -21,5 +22,9 @@ public class QueryBuilder {
 	
 	public static String getHistoricalCrowdedness(String stopId, int routeId, String startTime, String endTime, int durationDay){
 		return "rquest=history&route_id=" + routeId + "&stop_id=" + stopId + "&left=" + startTime + "&right=" + endTime + "&duration=" + durationDay;
+	}
+	
+	public static String recordEvent(String advertisingId, int eventId){
+		return "rquest=log&event_id=" + eventId + "&time=" + MiscFunctions.currentTimeStringBuilder(0);
 	}
 }
