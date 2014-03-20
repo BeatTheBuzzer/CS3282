@@ -183,22 +183,6 @@
      			android:layout_width="wrap_content"
      			android:textColor="#333333"
      			android:text="Submit"/>
-    		
-    	    <Button
-    	    	android:id="@+id/crowdednessTrueButton"
-     			android:layout_height="match_parent"
-     			android:layout_width="wrap_content"
-     			android:visibility="gone"
-     			android:textColor="#333333"
-     			android:text="Currently it is crowded"/>
-    	
-    		<Button
-    	    	android:id="@+id/crowdednessFalseButton"
-     			android:layout_height="match_parent"
-     			android:layout_width="wrap_content"
-     			android:visibility="gone"
-     			android:textColor="#333333"
-     			android:text="Currently it is uncrowded"/>
     	</LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -65,8 +65,6 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	TextView crowdednessGraphArrowText;
 	Spinner postCrowdednessInputSpinner;
 	Button crowdednessSubmitButton;
-	Button crowdednessTrueButton;
-	Button crowdednessFalseButton;
 	
 	Context mContext = this;
 	
@@ -90,8 +88,6 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		postCrowdednessArrowText = (TextView) findViewById(R.id.postCrowdednessArrowText);
 		postCrowdednessInputSpinner = (Spinner) findViewById(R.id.postCrowdednessInputSpinner);
 		crowdednessSubmitButton = (Button) findViewById(R.id.crowdednessSubmitButton);
-		crowdednessTrueButton = (Button) findViewById(R.id.crowdednessTrueButton);
-		crowdednessFalseButton = (Button) findViewById(R.id.crowdednessFalseButton);
 		
 		spinnerChoice = new ArrayAdapter<String>(getApplicationContext(), R.layout.simple_spinner_item_custom);
 		spinnerChoice.add("crowded");
@@ -154,28 +150,6 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				ServerCommunication poster = new ServerCommunication();
 				if(postMessage.equals("crowded")) poster.execute(QueryBuilder.post(routeId, stopId, true));
 				else poster.execute(QueryBuilder.post(routeId, stopId, false));
-		        Toast confirmation = Toast.makeText(getApplicationContext(), "Thanks for letting us know!", 5000);
-		        confirmation.show();
-			}
-		});
-		
-		crowdednessTrueButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				ServerCommunication poster = new ServerCommunication();
-		        poster.execute(QueryBuilder.post(routeId, stopId, true));
-		        Toast confirmation = Toast.makeText(getApplicationContext(), "Thanks for letting us know!", 5000);
-		        confirmation.show();
-			}
-		});
-		
-		crowdednessFalseButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				ServerCommunication poster = new ServerCommunication();
-		        poster.execute(QueryBuilder.post(routeId, stopId, false));
 		        Toast confirmation = Toast.makeText(getApplicationContext(), "Thanks for letting us know!", 5000);
 		        confirmation.show();
 			}
