@@ -187,7 +187,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				));
 		
 		CrowdednessGraphDrawer graphDrawer = new CrowdednessGraphDrawer(this.stopId, this.routeId, this.crowdednessGraph);
-		graphDrawer.drawGraph(-10, 5, 9, -3, 3);
+		graphDrawer.drawGraph(-20, 5, 15, -3, 3);
 	}
 
 	@Override
@@ -281,7 +281,8 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				int currentOffset = minOffsetStart + i*pointDistance;
 				int currentOffsetStart = minOffsetStart + i*pointDistance + pointOffsetStart;
 				int currentOffsetEnd = minOffsetStart + i*pointDistance + pointOffsetEnd;
-				xAxisLabels.add(MiscFunctions.currentTimeStringBuilder(currentOffset));
+//				xAxisLabels.add(MiscFunctions.currentTimeStringBuilder(currentOffset));
+				xAxisLabels.add(currentOffset == 0? "Now":((currentOffset > 0? "+":"") + currentOffset));
 				ServerCommunication retrieverHistorical = new ServerCommunication();
 				retrieverHistorical.setCallback(this);
 				retrieverHistorical.execute(QueryBuilder.getHistoricalCrowdedness(this.stopId,
@@ -329,26 +330,27 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 			XYMultipleSeriesRenderer graphRenderer=new XYMultipleSeriesRenderer();
 	     
 			graphRenderer.setChartTitle("Crowdedness over time");
-			graphRenderer.setXTitle("Time");
+			graphRenderer.setXTitle("Time (minutes)");
 	     	graphRenderer.setYTitle("Percentage of being crowded");
-	     	graphRenderer.setZoomButtonsVisible(true);
 	     	graphRenderer.setXLabels(0);
-	     	graphRenderer.setPanEnabled(false);
 	     	graphRenderer.setBackgroundColor(Color.WHITE);
 	     	graphRenderer.setMarginsColor(Color.WHITE);
 	     	graphRenderer.setAxesColor(Color.parseColor("#333333"));
 	     	graphRenderer.setLabelsColor(Color.parseColor("#333333"));
 	     	graphRenderer.setXLabelsColor(Color.parseColor("#333333"));
 	     	graphRenderer.setYLabelsColor(0, Color.parseColor("#333333"));
-	     	graphRenderer.setPanEnabled(false, true);
-	     	graphRenderer.setZoomEnabled(false, true);
-	     	graphRenderer.setZoomButtonsVisible(false);
-	     	graphRenderer.setLabelsTextSize(20);
-	     	graphRenderer.setAxisTitleTextSize(24);
-	     	graphRenderer.setChartTitleTextSize(32);
+	     	graphRenderer.setPanEnabled(true, true);
+	     	graphRenderer.setZoomEnabled(true, true);
+	     	graphRenderer.setZoomButtonsVisible(true);
+	     	graphRenderer.setLabelsTextSize(24);
+	     	graphRenderer.setAxisTitleTextSize(28);
+	     	graphRenderer.setChartTitleTextSize(36);
+	     	graphRenderer.setLegendTextSize(28);
 	     	graphRenderer.setMargins(new int[]{48,48,48,48});
 	     	graphRenderer.setYAxisMax(100);
 	     	graphRenderer.setYAxisMin(0);
+	     	graphRenderer.setXAxisMin(this.points.size()/6);
+	     	graphRenderer.setXAxisMax(4*this.points.size()/6);
 	     	graphRenderer.setPanLimits(new double[]{0,this.points.size(),0,100});
 	     	graphRenderer.setZoomLimits(new double[]{0,this.points.size(),0,100});
 	   

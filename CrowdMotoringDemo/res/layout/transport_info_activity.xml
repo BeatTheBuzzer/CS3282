@@ -76,7 +76,7 @@
     	    		android:id="@+id/crowdednessGraphArrowText"
         			android:layout_width="wrap_content"
         			android:layout_height="wrap_content"
-        			android:text="\u25B2"
+        			android:text="\u25BC"
     				android:textAlignment="center"
     				android:textColor="#FFFFFF"
             		android:textSize="20dp"
@@ -99,7 +99,8 @@
         			android:layout_width="match_parent"
         			android:layout_height="wrap_content"
         			android:id="@+id/crowdednessGraph"
-        			android:orientation="vertical">
+        			android:orientation="vertical"
+        			android:visibility="gone">
        
     			</LinearLayout>
     	
