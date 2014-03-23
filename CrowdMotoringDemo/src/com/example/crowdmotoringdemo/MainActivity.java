@@ -45,6 +45,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements ServerCommunicationCallback{
 	
@@ -153,6 +154,13 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 		
 		
 		
+	}
+	
+	public void onNoDataRetrieved(String requestStr){
+		Toast error = Toast.makeText(getApplicationContext(),
+				"Something went wrong :(\nTry to go back and reload this page, or reopen the app",
+				Properties.TOAST_DEFAULT_DURATION);
+        error.show();
 	}
 	
 	protected void updateStopDistance(){

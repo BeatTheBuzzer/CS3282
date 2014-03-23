@@ -33,6 +33,9 @@ public class CrowdednessGraphDrawer implements ServerCommunicationCallback{
 	final int yAxisMinValue = 0;
 	final int yAxisMaxValue = 100;
 	
+	int pointOffsetStart = 0;
+	int pointOffsetEnd = 0;
+	
 	Activity caller;
 	LinearLayout crowdednessGraph;
 	
@@ -62,6 +65,9 @@ public class CrowdednessGraphDrawer implements ServerCommunicationCallback{
 	public void drawGraph(int minOffsetStart, int pointDistance, int pointAmount, int pointOffsetStart, int pointOffsetEnd){
 		this.xAxisLabels.clear();
 		this.totalPoints = pointAmount;
+		
+		this.pointOffsetStart = pointOffsetStart;
+		this.pointOffsetEnd = pointOffsetEnd;
 		
 		for(int i = 0; i < pointAmount; i++){
 			int currentOffset = minOffsetStart + i*pointDistance;
@@ -200,11 +206,10 @@ public class CrowdednessGraphDrawer implements ServerCommunicationCallback{
 	public void onDataRetrieved(Object output, String requestStr) {
 		// TODO Auto-generated method stub
 		try {
-			if(output == null || ((String)output).length() <= 0){
-				this.points.add(0.0);
-				notify();
-				return;
-			}
+//			if(output == null || ((String)output).length() <= 0){
+//				this.points.add(0.0);
+//				return;
+//			}
 			JSONArray historicalDataArr = new JSONArray((String)output);
 			int yes = 0;
 			int no = 0;
@@ -227,4 +232,9 @@ public class CrowdednessGraphDrawer implements ServerCommunicationCallback{
 		}
 	}
 	
+	public void onNoDataRetrieved(String requestStr){
+		String[] requestStrArr = requestStr.split("start=");
+		String pointXLabel = MiscFunctions.addMinuteTimeStringBuilder(requestStrArr[1], this.pointOffsetStart);
+		this.xAxisLabels.remove(pointXLabel);
+	}
 }

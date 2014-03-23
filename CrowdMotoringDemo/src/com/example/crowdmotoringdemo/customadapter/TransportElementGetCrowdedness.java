@@ -102,4 +102,7 @@ public class TransportElementGetCrowdedness implements ServerCommunicationCallba
 		listView.setAdapter(adapter);
 	}
 
+	public void onNoDataRetrieved(String requestStr){
+		
+	}
 }

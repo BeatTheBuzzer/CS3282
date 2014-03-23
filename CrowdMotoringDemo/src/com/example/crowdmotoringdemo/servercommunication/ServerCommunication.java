@@ -55,9 +55,12 @@ public class ServerCommunication extends AsyncTask<String, Object, String>{
 	}
 	
 	protected void onPostExecute(String response){
-		if(caller == null) return;
-		System.out.println("onPostExecute " + response);
-		caller.onDataRetrieved(response, requestStr);
+		if(caller == null){
+			caller.onNoDataRetrieved(requestStr);
+		}
+		else{
+			caller.onDataRetrieved(response, requestStr);
+		}
 	}
 
 }

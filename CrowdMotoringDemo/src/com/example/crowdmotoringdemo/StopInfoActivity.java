@@ -19,6 +19,7 @@ import com.example.crowdmotoringdemo.servercommunication.QueryBuilder;
 import com.example.crowdmotoringdemo.servercommunication.ServerCommunication;
 import com.example.crowdmotoringdemo.servercommunication.ServerCommunicationCallback;
 import com.example.crowdmotoringdemo.variables.Constant;
+import com.example.crowdmotoringdemo.variables.Properties;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class StopInfoActivity extends Activity implements ServerCommunicationCallback{
 	
@@ -139,6 +141,13 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void onNoDataRetrieved(String requestStr){
+		Toast error = Toast.makeText(getApplicationContext(),
+				"Something went wrong :(\nTry to go back and reload this page, or reopen the app",
+				Properties.TOAST_DEFAULT_DURATION);
+        error.show();
 	}
 	
 	protected void refreshTransportList(){

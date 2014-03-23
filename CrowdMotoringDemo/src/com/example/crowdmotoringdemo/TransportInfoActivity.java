@@ -113,14 +113,13 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 					if(graphDrawer.graphIsDrawn()){
 						crowdednessGraph.setVisibility(View.GONE);
 					}
-					else{
-						crowdednessGraphNoDataText.setVisibility(View.GONE);
-					}
+					crowdednessGraphNoDataText.setVisibility(View.GONE);
 				}
 				else{
 					crowdednessGraphArrowText.setText(upArrow);
 					if(graphDrawer.graphIsDrawn()){
 						crowdednessGraph.setVisibility(View.VISIBLE);
+						crowdednessGraphNoDataText.setVisibility(View.GONE);
 					}
 					else{
 						crowdednessGraphNoDataText.setVisibility(View.VISIBLE);
@@ -250,6 +249,16 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	public void onNoDataRetrieved(String requestStr){
+		if(requestStr.contains("history")){
+			historicalText.setText(crowdednessHistoricalNoReport);
+		}
+		else if (requestStr.contains("current")){
+			realTimeText.setText(crowdednessRealTimeNoReport);
+			return;
 		}
 	}
 	
