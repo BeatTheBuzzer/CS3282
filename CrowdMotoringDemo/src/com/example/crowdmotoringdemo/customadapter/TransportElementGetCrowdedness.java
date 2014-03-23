@@ -54,20 +54,28 @@ public class TransportElementGetCrowdedness implements ServerCommunicationCallba
 		System.out.println("Success obtaining json " + output);
 		if(requestStr.contains("history")){
 			if(isCurrent) return; // current info supersedes historical info
+			e.setIsHistorical(true);
 			try {
 				if(output == null){
 					e.setCrowdedness(Constant.CROWDEDNESS_NO_DATA);
+					e.setIsHistorical(false);
 					return;
 				}
 				JSONArray historicalDataArr = new JSONArray((String)output);
-				JSONObject historicalData = historicalDataArr.getJSONObject(0);
-				int yes = historicalData.optInt("yes");
-				int no = historicalData.optInt("no");
+				int yes = 0;
+				int no = 0;
+				for(int i = 0; i < historicalDataArr.length();i++){
+					JSONObject historicalData = historicalDataArr.getJSONObject(i);
+					yes += historicalData.optInt("YES");
+					no += historicalData.optInt("NO");
+				}
 				if(yes == 0 && no == 0){
 					e.setCrowdedness(Constant.CROWDEDNESS_NO_DATA);
 					return;
 				}
-				if(yes > no) e.setCrowdedness(Constant.CROWDEDNESS_TRUE);
+				if(yes > no){
+					e.setCrowdedness(Constant.CROWDEDNESS_TRUE);
+				}
 				else e.setCrowdedness(Constant.CROWDEDNESS_FALSE);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -75,6 +83,7 @@ public class TransportElementGetCrowdedness implements ServerCommunicationCallba
 			}
 		}
 		else if (requestStr.contains("current")){
+			e.setIsHistorical(false);
 			try {
 				if(output == null || ((String)output).length() <= 0) return;
 				JSONArray currentDataArr = new JSONArray((String)output);

@@ -17,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.crowdmotoringdemo.graphdrawer.CrowdednessGraphDrawer;
 import com.example.crowdmotoringdemo.servercommunication.QueryBuilder;
 import com.example.crowdmotoringdemo.servercommunication.ServerCommunication;
 import com.example.crowdmotoringdemo.servercommunication.ServerCommunicationCallback;
@@ -63,10 +64,13 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	TextView historicalText;
 	TextView postCrowdednessArrowText;
 	TextView crowdednessGraphArrowText;
+	TextView crowdednessGraphNoDataText;
 	Spinner postCrowdednessInputSpinner;
 	Button crowdednessSubmitButton;
 	
 	Context mContext = this;
+	
+	CrowdednessGraphDrawer graphDrawer;
 	
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -82,6 +86,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		crowdednessGraphDisplayLinearLayout = (LinearLayout) findViewById(R.id.crowdednessGraphDisplayLinearLayout);
 		crowdednessGraph = (LinearLayout) findViewById(R.id.crowdednessGraph);
 		crowdednessGraphArrowText = (TextView) findViewById(R.id.crowdednessGraphArrowText);
+		crowdednessGraphNoDataText = (TextView) findViewById(R.id.crowdednessGraphNoDataText);
 		transportInfoText = (TextView) findViewById(R.id.transportInfoText);
 		realTimeText = (TextView) findViewById(R.id.crowdednessRealTimeText);
 		historicalText = (TextView) findViewById(R.id.crowdednessHistoricalText);
@@ -94,6 +99,8 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 		spinnerChoice.add("uncrowded");
 		postCrowdednessInputSpinner.setAdapter(spinnerChoice);
 		
+		graphDrawer = new CrowdednessGraphDrawer(this.stopId, this.routeId, this.crowdednessGraph, this);
+		
 		transportInfoText.setText(stopName + " - " + transportName);
 		
 		crowdednessGraphDisplayLinearLayout.setOnClickListener(new View.OnClickListener() {
@@ -103,11 +110,21 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				String downArrow = "\u25BC";
 				if(crowdednessGraphArrowText.getText().equals(upArrow)){
 					crowdednessGraphArrowText.setText(downArrow);
-					crowdednessGraph.setVisibility(View.GONE);
+					if(graphDrawer.graphIsDrawn()){
+						crowdednessGraph.setVisibility(View.GONE);
+					}
+					else{
+						crowdednessGraphNoDataText.setVisibility(View.GONE);
+					}
 				}
 				else{
 					crowdednessGraphArrowText.setText(upArrow);
-					crowdednessGraph.setVisibility(View.VISIBLE);
+					if(graphDrawer.graphIsDrawn()){
+						crowdednessGraph.setVisibility(View.VISIBLE);
+					}
+					else{
+						crowdednessGraphNoDataText.setVisibility(View.VISIBLE);
+					}
 				}
 			}
 		});
@@ -150,7 +167,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				ServerCommunication poster = new ServerCommunication();
 				if(postMessage.equals("crowded")) poster.execute(QueryBuilder.post(routeId, stopId, true));
 				else poster.execute(QueryBuilder.post(routeId, stopId, false));
-		        Toast confirmation = Toast.makeText(getApplicationContext(), "Thanks for letting us know!", 5000);
+		        Toast confirmation = Toast.makeText(getApplicationContext(), "Thanks for letting us know!", Properties.TOAST_DEFAULT_DURATION);
 		        confirmation.show();
 			}
 		});
@@ -169,8 +186,6 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	protected void onStart(){
 		super.onStart();
 		
-//		OpenChart();
-		
 		System.out.println("onCreate finishing");
 		System.out.println(QueryBuilder.getCurrentCrowdedness(stopId, routeId));
 		ServerCommunication retrieverCurrent = new ServerCommunication();
@@ -186,7 +201,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				Properties.HISTORICAL_DATA_DEFAULT_AMOUNT
 				));
 		
-		CrowdednessGraphDrawer graphDrawer = new CrowdednessGraphDrawer(this.stopId, this.routeId, this.crowdednessGraph);
+		graphDrawer = new CrowdednessGraphDrawer(this.stopId, this.routeId, this.crowdednessGraph, this);
 		graphDrawer.drawGraph(-20, 5, 15, -3, 3);
 	}
 
@@ -249,181 +264,5 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 	
 	protected String historicalReportBuilder(boolean crowdedness){
 		return "Historically, the bus is reported " + (crowdedness?"crowded":"uncrowded") + " at this point of time.";
-	}
-	
-	protected class CrowdednessGraphDrawer implements ServerCommunicationCallback{
-		final int yAxisMinValue = 0;
-		final int yAxisMaxValue = 100;
-		
-		LinearLayout crowdednessGraph;
-		
-		volatile ArrayList<Double> points;
-		
-		String stopId;
-		int routeId;
-		
-		int totalPoints;
-		ArrayList<String> xAxisLabels;
-		
-		public CrowdednessGraphDrawer(String stopId, int routeId, LinearLayout graph){
-			this.stopId = stopId;
-			this.routeId = routeId;
-			this.crowdednessGraph = graph;
-			this.points = new ArrayList<Double>();
-			this.xAxisLabels = new ArrayList<String>();
-		}
-		
-		public void drawGraph(int minOffsetStart, int pointDistance, int pointAmount, int pointOffsetStart, int pointOffsetEnd){
-			this.xAxisLabels.clear();
-			this.totalPoints = pointAmount;
-			
-			for(int i = 0; i < pointAmount; i++){
-				int currentOffset = minOffsetStart + i*pointDistance;
-				int currentOffsetStart = minOffsetStart + i*pointDistance + pointOffsetStart;
-				int currentOffsetEnd = minOffsetStart + i*pointDistance + pointOffsetEnd;
-//				xAxisLabels.add(MiscFunctions.currentTimeStringBuilder(currentOffset));
-				xAxisLabels.add(currentOffset == 0? "Now":((currentOffset > 0? "+":"") + currentOffset));
-				ServerCommunication retrieverHistorical = new ServerCommunication();
-				retrieverHistorical.setCallback(this);
-				retrieverHistorical.execute(QueryBuilder.getHistoricalCrowdedness(this.stopId,
-						this.routeId,
-						MiscFunctions.currentTimeStringBuilder(currentOffsetStart),
-						MiscFunctions.currentTimeStringBuilder(currentOffsetEnd),
-						Properties.HISTORICAL_DATA_DEFAULT_AMOUNT
-						));
-			}
-		}
-		
-		protected void renderGraph(){
-			final GraphicalView lineGraph;
-			final String[] xAxisLabelsFinal = new String[this.totalPoints];
-			
-			for(int i = 0; i < this.xAxisLabels.size(); i++){
-				xAxisLabelsFinal[i] = this.xAxisLabels.get(i);
-			}
-			
-			XYSeries crowdednessPercentage = new XYSeries("Crowdedness Percentage");
-			for(int i=0;i<this.points.size();i++)
-			{
-				DecimalFormat df= new DecimalFormat("0.00");
-				String format = df.format(this.points.get(i));
-				double finalValue = Double.parseDouble(format) ;
-				crowdednessPercentage.add(i, finalValue);
-			}
-	     
-			XYMultipleSeriesDataset dataset=new XYMultipleSeriesDataset();
-			dataset.addSeries(crowdednessPercentage);
-	     
-	     
-			// Create XYSeriesRenderer to customize the line
-
-			XYSeriesRenderer lineRenderer = new XYSeriesRenderer();
-			lineRenderer.setColor(Color.RED);
-			lineRenderer.setPointStyle(PointStyle.DIAMOND);
-			lineRenderer.setDisplayChartValues(true);
-			lineRenderer.setLineWidth(2);
-			lineRenderer.setFillPoints(true);
-			lineRenderer.setChartValuesTextSize(20);
-	     
-			// Create XYMultipleSeriesRenderer to customize the whole graph
-
-			XYMultipleSeriesRenderer graphRenderer=new XYMultipleSeriesRenderer();
-	     
-			graphRenderer.setChartTitle("Crowdedness over time");
-			graphRenderer.setXTitle("Time (minutes)");
-	     	graphRenderer.setYTitle("Percentage of being crowded");
-	     	graphRenderer.setXLabels(0);
-	     	graphRenderer.setBackgroundColor(Color.WHITE);
-	     	graphRenderer.setMarginsColor(Color.WHITE);
-	     	graphRenderer.setAxesColor(Color.parseColor("#333333"));
-	     	graphRenderer.setLabelsColor(Color.parseColor("#333333"));
-	     	graphRenderer.setXLabelsColor(Color.parseColor("#333333"));
-	     	graphRenderer.setYLabelsColor(0, Color.parseColor("#333333"));
-	     	graphRenderer.setPanEnabled(true, true);
-	     	graphRenderer.setZoomEnabled(true, true);
-	     	graphRenderer.setZoomButtonsVisible(true);
-	     	graphRenderer.setLabelsTextSize(24);
-	     	graphRenderer.setAxisTitleTextSize(28);
-	     	graphRenderer.setChartTitleTextSize(36);
-	     	graphRenderer.setLegendTextSize(28);
-	     	graphRenderer.setMargins(new int[]{48,48,48,48});
-	     	graphRenderer.setYAxisMax(100);
-	     	graphRenderer.setYAxisMin(0);
-	     	graphRenderer.setXAxisMin(this.points.size()/6);
-	     	graphRenderer.setXAxisMax(4*this.points.size()/6);
-	     	graphRenderer.setPanLimits(new double[]{0,this.points.size(),0,100});
-	     	graphRenderer.setZoomLimits(new double[]{0,this.points.size(),0,100});
-	   
-	     	graphRenderer.setShowGrid(true);
-	 
-	     	graphRenderer.setClickEnabled(true);
-	     
-	     	for(int i=0;i<points.size();i++)
-	     	{
-	     		graphRenderer.addXTextLabel(i, xAxisLabelsFinal[i]);
-	     	}
-	     	
-	     	graphRenderer.addSeriesRenderer(lineRenderer);
-	  
-
-	     	// Creating an intent to plot line chart using dataset and multipleRenderer
-	     
-	     	lineGraph = (GraphicalView)ChartFactory.getLineChartView(getBaseContext(), dataset, graphRenderer);
-	     
-	     	//  Adding click event to the Line Chart.
-	     
-	     	lineGraph.setOnClickListener(new View.OnClickListener() {
-	   
-	    	@Override
-	    	public void onClick(View arg0) {
-	    		 // TODO Auto-generated method stub
-	    		try{
-	    			SeriesSelection selectedPoint = lineGraph.getCurrentSeriesAndPoint();
-	    
-	    			if(selectedPoint!=null)
-	    			{
-	    				String time = xAxisLabelsFinal[(int)selectedPoint.getXValue()];
-	     
-	    				double amount=(double)selectedPoint.getValue();
-	    				
-	    				Toast.makeText(getBaseContext(), "Crowdedness at " + time + ": " + amount + "%", 5000).show();
-	    			}
-	    		} catch(Exception e){
-	    			
-	    		}
-	    	}
-	     	});
-	     	// Add the graphical view mChart object into the Linear layout .
-	     	crowdednessGraph.addView(lineGraph);
-			
-		}
-
-		@Override
-		public void onDataRetrieved(Object output, String requestStr) {
-			// TODO Auto-generated method stub
-			try {
-				if(output == null || ((String)output).length() <= 0){
-					this.points.add(0.0);
-					notify();
-					return;
-				}
-				JSONArray historicalDataArr = new JSONArray((String)output);
-				int yes = 0;
-				int no = 0;
-				for(int i = 0; i < historicalDataArr.length();i++){
-					JSONObject historicalData = historicalDataArr.getJSONObject(i);
-					yes += historicalData.optInt("YES");
-					no += historicalData.optInt("NO");
-				}
-				
-				this.points.add(100.0*yes/(yes+no));
-				if(this.points.size() >= this.totalPoints) this.renderGraph();
-
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 	}
 }

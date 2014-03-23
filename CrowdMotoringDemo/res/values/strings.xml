@@ -4,5 +4,8 @@
     <string name="app_name">CrowdMotoringDemo</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <color name="light_black">#333333</color>
+    <color name="darker_white">#EEEEEE</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>

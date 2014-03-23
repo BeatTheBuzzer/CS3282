@@ -5,6 +5,7 @@ public class TransportListElement {
 	protected long arrivalTimeMin;
 	protected int routeId;
 	protected int crowdedness;
+	protected boolean isHistorical;
 	
 	public TransportListElement(){
 		
@@ -26,6 +27,10 @@ public class TransportListElement {
 		return crowdedness;
 	}
 	
+	public boolean getIsHistorical(){
+		return isHistorical;
+	}
+	
 	public void setTransportName(String name){
 		transportName = name;
 	}
@@ -40,5 +45,9 @@ public class TransportListElement {
 	
 	public void setCrowdedness(int crowded){
 		crowdedness = crowded;
+	}
+	
+	public void setIsHistorical(boolean historical){
+		isHistorical = historical;
 	}
 }

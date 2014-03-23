@@ -95,14 +95,23 @@
     	
     		</LinearLayout>
         		
-        		<LinearLayout 
-        			android:layout_width="match_parent"
-        			android:layout_height="wrap_content"
-        			android:id="@+id/crowdednessGraph"
-        			android:orientation="vertical"
-        			android:visibility="gone">
-       
-    			</LinearLayout>
+        	<LinearLayout 
+        		android:layout_width="match_parent"
+        		android:layout_height="wrap_content"
+        		android:id="@+id/crowdednessGraph"
+        		android:orientation="vertical"
+        		android:visibility="gone">
+    		</LinearLayout>
+    		
+        	<TextView
+    	    	android:id="@+id/crowdednessGraphNoDataText"
+        		android:layout_width="wrap_content"
+        		android:layout_height="wrap_content"
+        		android:text="Sorry, we don't have enough data to show you any meaningful information here."
+    			android:textColor="#333333"
+            	android:textSize="16dp"
+            	android:padding="5dp"
+            	android:visibility="gone"/>
     	
     	</LinearLayout>
     	

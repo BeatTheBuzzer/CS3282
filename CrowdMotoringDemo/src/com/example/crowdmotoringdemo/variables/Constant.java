@@ -1,5 +1,7 @@
 package com.example.crowdmotoringdemo.variables;
 
+import com.example.crowdmotoringdemo.R;
+
 public class Constant {
 	public static final String EXTRA_STOP_ID = "STOP_ID";
 	public static final String EXTRA_TRANSPORT_ID = "TRANSPORT_ID";
@@ -20,4 +22,5 @@ public class Constant {
 	
 	public static final String COLOR_WHITE = "#FFFFFF";
 	public static final String COLOR_DARKER_WHITE = "#EEEEEE";
+	public static final String COLOR_LIGHT_BLACK = "#333333";
 }
