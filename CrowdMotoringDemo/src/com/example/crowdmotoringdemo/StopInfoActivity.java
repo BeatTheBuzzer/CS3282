@@ -46,6 +46,8 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 	EditText searchText;
 	ArrayList<TransportListElement> transportArrayBackup;
 	
+	Toast loading;
+	
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.stop_info_activity);
@@ -60,6 +62,9 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
         transportArray = new TransportListAdapter(getApplicationContext(), R.layout.transport_list_element);
         transportArray.setStopId(stopId);
         transportList.setAdapter(transportArray);
+        
+        loading = Toast.makeText(getApplicationContext(), "Loading..", Properties.TOAST_VERY_LONG_DURATION);
+        loading.show();
         
         transportList.setOnItemClickListener(new AdapterView.OnItemClickListener() {  
 			@Override
@@ -136,6 +141,7 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 				TransportElementGetCrowdedness.getCrowdedness(temp, stopId, transportArray, transportList);
 				transportArray.add(temp);
 				transportArrayBackup.add(temp);
+				loading.cancel();
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -144,6 +150,7 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 	}
 	
 	public void onNoDataRetrieved(String requestStr){
+		loading.cancel();
 		Toast error = Toast.makeText(getApplicationContext(),
 				"Something went wrong :(\nTry to go back and reload this page, or reopen the app",
 				Properties.TOAST_DEFAULT_DURATION);

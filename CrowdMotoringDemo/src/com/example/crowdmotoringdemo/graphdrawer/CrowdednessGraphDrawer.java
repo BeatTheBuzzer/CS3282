@@ -233,8 +233,9 @@ public class CrowdednessGraphDrawer implements ServerCommunicationCallback{
 	}
 	
 	public void onNoDataRetrieved(String requestStr){
-		String[] requestStrArr = requestStr.split("start=");
-		String pointXLabel = MiscFunctions.addMinuteTimeStringBuilder(requestStrArr[1], this.pointOffsetStart);
+		String[] requestStrArr = requestStr.split("left=");
+		String[] requestStrArr2 = requestStrArr[1].split("&");
+		String pointXLabel = MiscFunctions.addMinuteTimeStringBuilder(requestStrArr2[0], this.pointOffsetStart);
 		this.xAxisLabels.remove(pointXLabel);
 	}
 }

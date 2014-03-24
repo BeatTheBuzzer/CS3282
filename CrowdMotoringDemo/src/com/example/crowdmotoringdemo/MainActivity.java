@@ -58,6 +58,8 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 	LocationListener locationListener;
 	Location currLoc;
 	
+	Toast loading;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,6 +70,9 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 		searchText = (EditText) findViewById(R.id.search_text);
         stopArray = new StopListAdapter(getApplicationContext(), R.layout.stop_list_element);
         stopList.setAdapter(stopArray);
+        
+        loading = Toast.makeText(getApplicationContext(), "Loading..", Properties.TOAST_VERY_LONG_DURATION);
+        loading.show();
         
         stopList.setOnItemClickListener(new AdapterView.OnItemClickListener() {  
 			@Override
@@ -134,7 +139,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 		// 1. Translate the string into JSON object
 		// 2. Create clickable bus stop buttons sorted by distance
 		// 3. Add events to each bus stop button to change to StopView
-		
+		loading.cancel();
 		System.out.println("Success obtaining json " + output);
 		JSONArray stopArrayJson;
 		
@@ -143,7 +148,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 			stopArrayJsonList = new ArrayList<JSONObject>();
 			for(int i = 0; i < stopArrayJson.length(); i++){
 				stopArrayJsonList.add(stopArrayJson.optJSONObject(i));
-				stopArrayJson.optJSONObject(i).put("distance", 0.0);
+				stopArrayJson.optJSONObject(i).put("distance", -1.0);
 			}
 			
 			this.updateStopDistance();
@@ -157,6 +162,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 	}
 	
 	public void onNoDataRetrieved(String requestStr){
+		loading.cancel();
 		Toast error = Toast.makeText(getApplicationContext(),
 				"Something went wrong :(\nTry to go back and reload this page, or reopen the app",
 				Properties.TOAST_DEFAULT_DURATION);
