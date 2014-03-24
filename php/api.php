@@ -227,7 +227,7 @@ class API extends REST {
 			$duration = 28;
 		}
 		for ($i=1;$i<=$duration;$i++){
-			$query ="SELECT (SELECT SUBDATE(CURDATE(),INTERVAL $i DAY)) AS Date, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded ='yes' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(CURTIME(),'$left')) AS YES, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded='no' AND time <= ADDTIME(CURTIME(),'$right') AND time >= SUBTIME(curtime(),'$left')) AS NO";
+			$query ="SELECT (SELECT SUBDATE(CURDATE(),INTERVAL $i DAY)) AS Date, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded ='yes' AND time <= '$right' AND time >= '$left') AS YES, (SELECT COUNT(1) FROM info WHERE route_id = $route_id AND stop_id ='$stop_id' AND date = SUBDATE(CURDATE(),INTERVAL $i DAY) AND crowded='no' AND time <= '$right' AND time >= '$left') AS NO";
 
 			$sql=mysql_query($query,$this->db);
 			if($sql){
@@ -243,7 +243,7 @@ class API extends REST {
 		else
 			$this->response('',204);
 	}
-	
+
 	// for logging event and user evaluation
 	private function log(){
 		$event_id = mysql_real_escape_string($this -> _request['event_id']);
