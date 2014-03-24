@@ -243,6 +243,7 @@ class API extends REST {
 		else
 			$this->response('',204);
 	}
+	
 	// for logging event and user evaluation
 	private function log(){
 		$event_id = mysql_real_escape_string($this -> _request['event_id']);
