@@ -201,7 +201,7 @@ public class TransportInfoActivity extends Activity implements ServerCommunicati
 				));
 		
 		graphDrawer = new CrowdednessGraphDrawer(this.stopId, this.routeId, this.crowdednessGraph, this);
-		graphDrawer.drawGraph(-20, 5, 15, -3, 3);
+		graphDrawer.drawGraph(-10, 5, 9, -3, 3);
 	}
 
 	@Override
