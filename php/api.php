@@ -51,64 +51,15 @@ class API extends REST {
 		}
 	}
 
-	/*
-	 *	Used for debugging purpose
-	 */
-	private function users(){	
-
-		$sql = mysql_query("SELECT user_id, name FROM user", $this->db);
-		if(mysql_num_rows($sql) > 0){
-			$result = array();
-			while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
-				//	append to the result array
-				$result[] = $rlt;
-			}
-			// If query is success and everythig is good, send header as "OK" and return list of users in JSON format
-			$this->response($this->json($result), 200);
-		}
-		// If no records "No Content" status
-		$this->response('',204);
-	}
-
-	/*
-	 *	register an account, parameter: name, email and password
-	 *	Return: {"result":"Registration success"} or {"result":"Registration failed"}
-	 */
-	private function register(){
-		$name = mysql_real_escape_string($this -> _request['name']);
-		$email = mysql_real_escape_string($this -> _request['email']);
-		$pwd = mysql_real_escape_string($this -> _request['pwd']);
-		$sql=mysql_query("INSERT INTO user (name,email,password) VALUES('$name', '$email','$pwd')",$this->db);
-		if($sql){
-			$this->response(("{\"result\":\"Registration success\"}"), 200);
-		}
-		$this->response(("{\"result\":\"Registration failed\"}"), 200);
-	}
-
-	/*
-	 *	Login, parameter: email and password
-	 *	Return: if login is successfule, return user_id,else return {"result":"No such user"}
-	 */
-	private function login(){
-		$email = mysql_real_escape_string($this -> _request['email']);
-		$pwd = mysql_real_escape_string($this -> _request['pwd']);
-		$sql=mysql_query("SELECT user_id FROM user WHERE email = '$email' AND password = '$pwd'",$this->db);
-		if(mysql_num_rows($sql) > 0){
-			$result = array();
-			$result = mysql_fetch_array($sql,MYSQL_ASSOC);
-			$this->response($this->json($result), 200);
-		}
-		$this->response(("{\"result\":\"No such user\"}"), 200);
-	}
-
-
 	/* 
 	 *	Parameter: stop_id
 	 *	Return all buses with their time in a particular bus stop
 	 */
 	private function businfo(){
+
 		$stop_id = mysql_real_escape_string($this -> _request['stop_id']);
-		$query = "SELECT schedule.route_id, name, time FROM route,schedule WHERE schedule.stop_id='$stop_id' AND schedule.route_id = route.route_id AND time >= curtime() GROUP BY route_id ORDER BY time";
+		$query = "SELECT x.route_id, y.name,  x.time FROM (SELECT * FROM schedule WHERE stop_id = '$stop_id' AND time >= CURTIME() ORDER BY time) x, route y WHERE x.route_id = y.route_id GROUP BY route_id";
+
 		$sql=mysql_query($query,$this->db);
 
 		if(mysql_num_rows($sql) > 0){
@@ -195,7 +146,7 @@ class API extends REST {
 
 		//	Get the info of the previous stop
 		for($i = 1;$i <= 20;$i++){
-			$query = "SELECT $i AS stop_diff, info.stop_id,bus_stop.name, crowded, SUBTIME(CURTIME(), time) AS difference from info, bus_stop where info.stop_id = bus_stop.stop_id AND info.stop_id = (SELECT stop_id FROM $table WHERE idx = (SELECT (idx-$i) FROM $table WHERE stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() ORDER BY difference LIMIT 1";
+			$query = "SELECT $i AS stop_diff, info.stop_id,bus_stop.name, crowded, SUBTIME(CURTIME(), time) AS difference from info, bus_stop where info.route_id = $route_id AND info.stop_id = bus_stop.stop_id AND info.stop_id = (SELECT stop_id FROM $table WHERE idx = (SELECT (idx-$i) FROM $table WHERE stop_id='$stop_id')) AND date = CURDATE() AND time <= CURTIME() ORDER BY difference LIMIT 1";
 			$sql=mysql_query($query,$this->db);
 			if($sql){
 				if(mysql_num_rows($sql) > 0){
@@ -257,6 +208,57 @@ class API extends REST {
 
 		$this->response('',204);
 	}
+
+	/*
+	private function users(){	
+
+		$sql = mysql_query("SELECT user_id, name FROM user", $this->db);
+		if(mysql_num_rows($sql) > 0){
+			$result = array();
+			while($rlt = mysql_fetch_array($sql,MYSQL_ASSOC)){
+				//	append to the result array
+				$result[] = $rlt;
+			}
+			// If query is success and everythig is good, send header as "OK" and return list of users in JSON format
+			$this->response($this->json($result), 200);
+		}
+		// If no records "No Content" status
+		$this->response('',204);
+	}
+
+	/*
+	 *	register an account, parameter: name, email and password
+	 *	Return: {"result":"Registration success"} or {"result":"Registration failed"}
+	 
+	private function register(){
+		$name = mysql_real_escape_string($this -> _request['name']);
+		$email = mysql_real_escape_string($this -> _request['email']);
+		$pwd = mysql_real_escape_string($this -> _request['pwd']);
+		$sql=mysql_query("INSERT INTO user (name,email,password) VALUES('$name', '$email','$pwd')",$this->db);
+		if($sql){
+			$this->response(("{\"result\":\"Registration success\"}"), 200);
+		}
+		$this->response(("{\"result\":\"Registration failed\"}"), 200);
+	}
+
+	/*
+	 *	Login, parameter: email and password
+	 *	Return: if login is successfule, return user_id,else return {"result":"No such user"}
+	 
+	private function login(){
+		$email = mysql_real_escape_string($this -> _request['email']);
+		$pwd = mysql_real_escape_string($this -> _request['pwd']);
+		$sql=mysql_query("SELECT user_id FROM user WHERE email = '$email' AND password = '$pwd'",$this->db);
+		if(mysql_num_rows($sql) > 0){
+			$result = array();
+			$result = mysql_fetch_array($sql,MYSQL_ASSOC);
+			$this->response($this->json($result), 200);
+		}
+		$this->response(("{\"result\":\"No such user\"}"), 200);
+	}
+	
+	*/
+
 
 }
 // Initiiate Library
