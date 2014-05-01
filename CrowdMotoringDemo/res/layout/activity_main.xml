@@ -16,6 +16,18 @@
         android:background="#FFFFFF"
         android:orientation="vertical"
         android:padding="0dp" >
+        
+        <TextView
+    	    android:id="@+id/infoText"
+        	android:layout_width="match_parent"
+        	android:layout_height="wrap_content"
+        	android:background="#888888"
+        	android:text="Bus stops near you"
+    		android:textAlignment="center"
+    		android:textColor="#FFFFFF"
+            android:textSize="24dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"/>
     	
     	<EditText
             android:id="@+id/search_text"

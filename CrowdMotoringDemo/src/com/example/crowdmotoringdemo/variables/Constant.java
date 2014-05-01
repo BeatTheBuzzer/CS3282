@@ -14,6 +14,7 @@ public class Constant {
 	public static final String CROWDEDNESS_POST_TRUE = "yes";
 	public static final String CROWDEDNESS_POST_FALSE = "no";
 	
+//	public static final int TIME_OFFSET = 0;
 	public static final int TIME_OFFSET = 28800000;
 	
 	public static final int CROWDEDNESS_TRUE = 1;

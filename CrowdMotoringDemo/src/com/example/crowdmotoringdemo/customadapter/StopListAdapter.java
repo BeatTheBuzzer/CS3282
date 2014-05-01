@@ -48,8 +48,9 @@ public class StopListAdapter extends ArrayAdapter<StopListElement>{
 	    	DecimalFormat df = new DecimalFormat("#.##");
 	    	
 	    	stopNameText.setText(p.getName());
-	    	if(Double.compare(p.getDistance(), 0.0) < 0) stopDistanceText.setText("Distance: Unable to calculate distance :(");
+	    	if(Double.compare(p.getDistance(), 0.0) < 0) stopDistanceText.setText("Distance: Unable to obtain your location :(");
 	    	else stopDistanceText.setText("Distance: " + df.format(p.getDistance()) + " m");
+//	    	stopDistanceText.setText("Distance: Unable to obtain your location :(");
 	    }
 	    
 	    return v;

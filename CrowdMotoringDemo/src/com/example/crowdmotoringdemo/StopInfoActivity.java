@@ -32,6 +32,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class StopInfoActivity extends Activity implements ServerCommunicationCallback{
@@ -44,6 +45,7 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 	ListView transportList;
 	JSONArray transportArrayJson;
 	EditText searchText;
+	TextView infoText;
 	ArrayList<TransportListElement> transportArrayBackup;
 	
 	Toast loading;
@@ -56,6 +58,9 @@ public class StopInfoActivity extends Activity implements ServerCommunicationCal
 		stopName = getIntent().getStringExtra(Constant.EXTRA_STOP_NAME);
 		
 		transportList = (ListView) findViewById(R.id.list);
+		
+		infoText = (TextView) findViewById(R.id.infoText);
+		infoText.setText(stopName);
 		
 		searchText = (EditText) findViewById(R.id.search_text);
 		transportArrayBackup = new ArrayList<TransportListElement>();

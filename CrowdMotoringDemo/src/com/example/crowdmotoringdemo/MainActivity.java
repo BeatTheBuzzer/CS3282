@@ -131,6 +131,12 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 
         currLoc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Properties.LOCATION_REFRESH_TIME, Properties.LOCATION_REFRESH_DISTANCE, locationListener);
+        
+        // Mock location setter
+//        currLoc = new Location(LocationManager.GPS_PROVIDER);
+//        currLoc.setLatitude(1.297625);
+//        currLoc.setLongitude(103.772545);
+//        updateStopDistance();
 	}
 
 	@Override
@@ -200,7 +206,7 @@ public class MainActivity extends Activity implements ServerCommunicationCallbac
 			}
 			else{
 				try {
-					currBusStop.put("distance", 0);
+					currBusStop.put("distance", -1.0);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
